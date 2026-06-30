@@ -1,0 +1,1139 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Portal dự đoán kết quả World Cup 2026 - P.CN</title>
+  <style>
+    :root{
+      --bg:#0b1220; --panel:#121c31; --panel2:#162238; --card:#10182b; --muted:#90a4c4; --text:#f4f7fb;
+      --brand:#46d39a; --brand2:#64a7ff; --danger:#ff6978; --warn:#ffd166; --ok:#3ddc97; --line:rgba(255,255,255,.1);
+      --shadow:0 12px 36px rgba(0,0,0,.28); --radius:18px;
+    }
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top left, rgba(70,211,154,.14), transparent 36%),radial-gradient(circle at top right, rgba(100,167,255,.18), transparent 34%),var(--bg);color:var(--text);}
+    button,input,select,textarea{font:inherit} button{cursor:pointer} .wrap{max-width:1240px;margin:0 auto;padding:16px 14px 96px}.hero{position:sticky;top:0;z-index:20;margin:-16px -14px 12px;padding:14px;background:rgba(11,18,32,.86);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+    .hero-inner{max-width:1240px;margin:0 auto;display:flex;gap:12px;align-items:center;justify-content:space-between}.title{display:flex;gap:12px;align-items:center}.logo{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:var(--shadow);font-size:24px}.title h1{font-size:20px;line-height:1.1;margin:0}.title p{margin:4px 0 0;color:var(--muted);font-size:13px}.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);border-radius:999px;padding:9px 12px;font-weight:700;font-size:13px;white-space:nowrap}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card{background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.025));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.pad{padding:15px}.stat b{display:block;font-size:18px;margin-top:4px}.stat span{color:var(--muted);font-weight:700;font-size:12px}.stat .stat-player{display:block;font-size:13px;line-height:1.25;color:var(--text);font-weight:700;margin-top:4px}.stat .stat-value{display:block;font-size:14px;line-height:1.2;color:#dff8eb;font-weight:900;margin-top:6px}.tabs{position:sticky;bottom:0;z-index:50;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0 0;padding:10px;background:rgba(11,18,32,.88);backdrop-filter:blur(15px);border:1px solid var(--line);border-radius:22px}.tab{border:0;border-radius:15px;padding:12px 8px;color:var(--muted);background:transparent;font-weight:900}.tab.active{color:#07111f;background:linear-gradient(135deg,var(--brand),var(--brand2))}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0}.field{display:flex;flex-direction:column;gap:6px;min-width:180px;flex:1}.field label{font-size:12px;color:var(--muted);font-weight:800}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);border-radius:14px;padding:12px;outline:none}.field textarea{min-height:110px}.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(100,167,255,.75)}.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--text);padding:11px 13px;font-weight:900}.btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#07111f;border:0}.btn.danger{background:rgba(255,105,120,.12);border-color:rgba(255,105,120,.35);color:#ffdbe0}.btn.warn{background:rgba(255,209,102,.13);border-color:rgba(255,209,102,.38);color:#fff1bd}.section{display:none}.section.active{display:block}.match-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.match-card{padding:14px;background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:18px}.match-head{display:flex;gap:8px;align-items:flex-start;justify-content:space-between}.match-meta{color:var(--muted);font-size:12px;font-weight:800}.teams{font-size:19px;font-weight:1000;margin:8px 0 2px;line-height:1.25}.venue{color:var(--muted);font-size:13px}.pick-row{display:grid;grid-template-columns:1fr .7fr 1fr;gap:8px;margin-top:12px}.pick{border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);border-radius:14px;padding:11px 8px;font-weight:1000}.pick.active{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#07111f;border:0}.pick:disabled{opacity:.48;cursor:not-allowed}.badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 9px;font-weight:900;font-size:12px}.badge.open{background:rgba(70,211,154,.13);color:#bff8dd;border:1px solid rgba(70,211,154,.32)}.badge.lock{background:rgba(255,209,102,.14);color:#ffedb3;border:1px solid rgba(255,209,102,.3)}.badge.done{background:rgba(100,167,255,.14);color:#d7e8ff;border:1px solid rgba(100,167,255,.35)}.badge.bad{background:rgba(255,105,120,.14);color:#ffccd2;border:1px solid rgba(255,105,120,.35)}.fine-ok{color:#9df5cb;font-weight:1000}.fine-bad{color:#ffb5bd;font-weight:1000}.fine-warn{color:#ffe19b;font-weight:1000}table{width:100%;border-collapse:separate;border-spacing:0 8px}th{color:var(--muted);text-align:left;font-size:12px;padding:0 10px;font-weight:900}td{background:rgba(255,255,255,.045);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px;vertical-align:top}td:first-child{border-left:1px solid var(--line);border-radius:13px 0 0 13px}td:last-child{border-right:1px solid var(--line);border-radius:0 13px 13px 0}.right{text-align:right}.center{text-align:center}.small{font-size:12px;color:var(--muted)}.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);max-width:min(520px,calc(100vw - 24px));background:#08101d;border:1px solid var(--line);box-shadow:var(--shadow);border-radius:16px;padding:12px 14px;z-index:100;display:none}.toast.show{display:block}.admin-only{display:none}.admin .admin-only{display:block}.result-row{display:grid;grid-template-columns:1.2fr 92px 92px 128px;gap:8px;align-items:end;padding:10px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.04);margin-bottom:8px}.result-row input{text-align:center}.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{display:inline-flex;border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900;color:var(--muted)}.chip.ok{color:#bff8dd;border-color:rgba(70,211,154,.28)}.chip.bad{color:#ffccd2;border-color:rgba(255,105,120,.28)}.footer-note{margin:16px 0;color:var(--muted);font-size:12px;line-height:1.5}.hidden-frame{position:absolute;width:1px;height:1px;left:-9999px;top:-9999px}.nowrap{white-space:nowrap}.source{font-size:12px;color:var(--muted);line-height:1.5}.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.progress{height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.bar{height:100%;background:linear-gradient(90deg,var(--brand),var(--brand2));width:0}.notice{border:1px solid rgba(255,209,102,.28);background:rgba(255,209,102,.08);border-radius:16px;padding:12px;color:#ffedb3;margin:12px 0}.okbox{border:1px solid rgba(70,211,154,.26);background:rgba(70,211,154,.08);border-radius:16px;padding:12px;color:#c9ffe4;margin:12px 0}.code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:rgba(255,255,255,.07);border-radius:8px;padding:2px 5px}.field select option{background:#10182b;color:#f4f7fb}.field select:focus option{background:#10182b;color:#f4f7fb}.admin-login-note{color:var(--muted);font-size:13px;margin-top:4px}.day-group{margin:16px 0 22px}.day-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;padding:12px 14px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.055)}.day-head h3{margin:0;font-size:17px}.day-head .small{font-weight:800}.day-body{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.match-card.daytone-0{border-left:5px solid #46d39a}.match-card.daytone-1{border-left:5px solid #64a7ff}.match-card.daytone-2{border-left:5px solid #ffd166}.match-card.daytone-3{border-left:5px solid #ff6978}.match-card.daytone-4{border-left:5px solid #b28dff}.match-card.daytone-5{border-left:5px solid #75e6da}.submitbar{position:sticky;top:84px;z-index:15;padding:10px;border:1px solid var(--line);border-radius:18px;background:rgba(11,18,32,.82);backdrop-filter:blur(12px)}.pick.draft{box-shadow:0 0 0 2px rgba(255,209,102,.8) inset}.name-link{border:0;background:transparent;color:var(--text);font-weight:1000;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:0;text-align:left}.name-link:hover{color:#bff8dd}.detail-panel{border:1px solid rgba(100,167,255,.28);background:rgba(100,167,255,.08);border-radius:16px;padding:12px;margin:12px 0}.status-pill{display:inline-flex;border-radius:999px;padding:4px 8px;font-size:12px;font-weight:1000;border:1px solid var(--line)}.status-pill.ok{color:#bff8dd;border-color:rgba(70,211,154,.28);background:rgba(70,211,154,.1)}.status-pill.bad{color:#ffccd2;border-color:rgba(255,105,120,.28);background:rgba(255,105,120,.1)}.status-pill.warn{color:#ffe19b;border-color:rgba(255,209,102,.28);background:rgba(255,209,102,.1)}
+    .predict-panel{border:1px solid rgba(100,167,255,.35);background:linear-gradient(135deg,rgba(100,167,255,.16),rgba(70,211,154,.1));border-radius:22px;padding:16px;margin:12px 0;box-shadow:0 18px 40px rgba(0,0,0,.18)}.predict-panel .field{min-width:220px;flex:0 1 220px}.predict-panel .field label{font-size:13px;color:#dce9ff;font-weight:800;letter-spacing:.01em}.predict-panel .field select{font-size:13px;font-weight:700;padding:10px 11px;background:#f4f7fb;color:#07111f;border-color:rgba(255,255,255,.7)}.submitbar{top:12px;justify-content:center;gap:8px;flex-wrap:wrap}.submitbar .btn.primary{font-size:14px;min-height:42px;padding:10px 16px;min-width:min(220px,100%);border-radius:999px}.match-card .teams{font-size:14px;line-height:1.25}.match-card .match-head{gap:10px}.match-card .pick{font-size:12px;padding:8px 6px;min-height:38px}.predict-panel .notice{font-size:12.5px;line-height:1.45;font-style:italic;color:#e4edff}.predict-panel .notice b{font-weight:800}.toast{top:50%;bottom:auto;transform:translate(-50%,-50%);font-size:15px;font-weight:800;text-align:center;line-height:1.45;background:#f4f7fb;color:#07111f;border:2px solid rgba(70,211,154,.65);padding:16px 18px;max-width:min(560px,calc(100vw - 24px));box-shadow:0 20px 48px rgba(0,0,0,.2)}.player-picker-card{margin:12px 0 10px;padding:12px;border:1px solid var(--line);background:rgba(255,255,255,.035);border-radius:16px}.player-picker-card table{width:100%;border-collapse:collapse}.player-picker-card th,.player-picker-card td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}.player-picker-card th{color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.05em}.player-picker-card .pick-player-btn{border:0;border-radius:999px;padding:6px 10px;background:rgba(100,167,255,.16);color:#dceeff;font-size:12px;font-weight:800}.player-picker-card .pick-player-btn.active{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#07111f}.stats-day-card{margin:14px 0;padding:12px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02))}.stats-day-card h3{margin:0 0 8px;font-size:16px}.stats-day-card table{width:100%;border-collapse:collapse}.stats-day-card th,.stats-day-card td{padding:8px 8px;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px;white-space:nowrap}.stats-day-card .day-summary-row td{background:rgba(100,167,255,.12);font-weight:800}.stats-day-card .muted{color:var(--muted)}.stat-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}.stat-mini{border:1px solid var(--line);background:rgba(255,255,255,.055);border-radius:16px;padding:12px}.stat-mini span{display:block;color:var(--muted);font-size:12px;font-weight:900}.stat-mini b{display:block;font-size:24px;margin-top:4px}.day-group{margin:12px 0 16px;padding:12px;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:rgba(255,255,255,.03)}.day-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.match-card{border:1px solid rgba(255,255,255,.08);background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.04));border-radius:18px;padding:12px;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.match-card:hover{transform:translateY(-2px);border-color:rgba(100,167,255,.25);box-shadow:0 14px 32px rgba(0,0,0,.18)}.match-head{display:flex;gap:8px;justify-content:space-between;align-items:flex-start}.match-meta{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:4px}.teams{font-size:16px;font-weight:900;line-height:1.3}.pick-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.pick{padding:10px 8px;border-radius:12px;font-size:13px;font-weight:800;min-height:42px}.rank-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:12px 0}.rank-card{position:relative;overflow:hidden;border:1px solid var(--line);background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.04));border-radius:18px;padding:14px}.rank-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at top right,rgba(255,255,255,.12),transparent 42%);pointer-events:none}.rank-card.good{border-color:rgba(70,211,154,.38);box-shadow:inset 0 0 0 1px rgba(70,211,154,.16)}.rank-card.bad{border-color:rgba(255,105,120,.35);box-shadow:inset 0 0 0 1px rgba(255,105,120,.16)}.rank-card h4{position:relative;display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:15px}.rank-card .rank-icon{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.12);font-size:15px}.rank-card .rank-list{position:relative;list-style:none;margin:0;padding:0;display:grid;gap:8px}.rank-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 11px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.06);border-radius:12px}.rank-item.top1{background:rgba(255,209,102,.15);border-color:rgba(255,209,102,.35)}.rank-pos{min-width:28px;height:28px;border-radius:999px;display:grid;place-items:center;background:rgba(255,255,255,.16);font-weight:900;font-size:12px}.rank-info{flex:1;min-width:0}.rank-info strong{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rank-info span{display:block;color:var(--muted);font-size:12px;margin-top:2px}.rank-score{font-weight:900;font-size:13px;color:#fff;text-align:right}.pick{font-size:15px;font-weight:900}.predict-panel .notice{font-size:15px;line-height:1.55}.field select{font-size:15px;font-weight:800}.field label{font-size:13px}.admin-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.admin-block{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:18px;padding:14px;margin-top:12px}.danger-zone{border-color:rgba(255,105,120,.35);background:rgba(255,105,120,.08)}
+    @media(max-width:880px){.day-body{grid-template-columns:1fr}.hero-inner{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:repeat(2,1fr)}.match-grid{grid-template-columns:1fr}.tabs{grid-template-columns:repeat(2,1fr);border-radius:18px}.result-row{grid-template-columns:1fr 72px 72px}.result-row .save-result{grid-column:1/-1}.kpi-row,.stat-summary,.admin-grid{grid-template-columns:1fr}.title h1{font-size:18px}.pill{font-size:12px}.wrap{padding-bottom:140px}.predict-panel .field{min-width:100%;flex:1 1 100%}.match-card .teams{font-size:13px}} 
+    @media(max-width:520px){.grid{grid-template-columns:1fr}.pick-row{grid-template-columns:1fr}.result-row{grid-template-columns:1fr}.toolbar{display:grid;grid-template-columns:1fr}.hero{position:relative}.tabs{position:fixed;left:10px;right:10px;bottom:10px}.stat b{font-size:23px}.submitbar .btn.primary{width:100%;min-width:0}.predict-panel,.match-card{padding:12px}.predict-panel .notice{font-size:12px}}
+    @media print{.hero,.tabs,.toolbar .btn,#adminBox,.toast{display:none!important}body{background:white;color:#111}.card,td{box-shadow:none;background:white;color:#111;border-color:#ddd}.small,.field label,th{color:#555}.wrap{max-width:none;padding:0}.section{display:block!important;page-break-after:always}.section:not(.active){display:none!important}}
+  </style>
+  <style>
+    .function-menu{gap:8px}.function-menu .btn{border-radius:999px;min-height:40px;padding:9px 14px}
+    .function-menu .btn.active,.stats-mode-btn.active,.admin-panel-btn.active{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#07111f;border:0}
+    :root{--bg:#e8f1f7;--text:#18283b;--muted:#52677f;--line:rgba(24,40,59,.14);--card:#ffffff;--brand:#1eb980;--brand2:#2d7ff9}
+    body{background:radial-gradient(circle at 12% 0,rgba(45,127,249,.18),transparent 32%),radial-gradient(circle at 88% 8%,rgba(30,185,128,.16),transparent 28%),linear-gradient(180deg,#e8f1f7 0,#f4f8fb 56%,#eaf4ef 100%);color:var(--text)}
+    .hero{background:rgba(247,251,255,.92);border-bottom:1px solid rgba(24,40,59,.12);box-shadow:0 8px 24px rgba(24,40,59,.08)}.logo{background:linear-gradient(135deg,#1eb980,#2d7ff9);color:#fff}.title h1{font-size:24px;color:#14243a}.title p,.small,.match-meta,.venue{color:var(--muted)}.pill,.card,.tabs,.submitbar,.day-group,.match-card,.stats-day-card,.player-picker-card{background:rgba(255,255,255,.9);color:var(--text);border-color:var(--line);box-shadow:0 12px 28px rgba(30,54,86,.1)}
+    .tab{background:#f8fbff;color:#24415f;border:1px solid rgba(36,65,95,.16);display:flex;align-items:center;justify-content:center;gap:7px}.tab.active{color:#07111f;background:linear-gradient(135deg,#62e2aa,#7fb8ff);box-shadow:0 10px 22px rgba(45,127,249,.18)}td{background:rgba(255,255,255,.82);color:var(--text);border-color:rgba(24,40,59,.1)}th{color:#41576f}.field input,.field select,.field textarea{background:#fff;color:var(--text);border-color:rgba(24,40,59,.2)}.chip{background:#eef6ff;color:#25415f;border-color:rgba(37,65,95,.18)}.notice{background:#fff7d8;color:#614b00;border-color:#efd36b}.okbox{background:#e8fff4;color:#075335;border-color:#a7eacb}
+    .day-body{grid-template-columns:repeat(3,1fr);gap:10px}.day-group{padding:10px}.day-head{padding:8px 10px;margin-bottom:8px}.day-head h3{font-size:15px}
+    .match-card{padding:10px;border-radius:14px;background:linear-gradient(135deg,#ffffff,#eaf5ff);border-color:rgba(37,65,95,.13)}
+    .match-card .match-meta{font-size:11px;color:#5e7089}.match-card .teams{font-size:14px;color:#142033;line-height:1.22}.match-card .venue{font-size:11px;color:#667891}
+    .match-card .badge{font-size:11px;padding:5px 7px}.match-card .pick-row{gap:6px;margin-top:8px}.match-card .pick{min-height:34px;padding:7px 6px;font-size:12px;border-radius:10px;background:#f3f8ff;color:#162033;border-color:rgba(37,65,95,.16)}
+    .match-card .pick.active{color:#07111f}.match-card .small{font-size:11px;color:#5d718b}
+    .result-day-group{margin:10px 0 14px}.result-day-title{font-size:15px;margin:0 0 8px;color:#dce9ff}.result-row{grid-template-columns:1.4fr 76px 76px 96px 92px;padding:8px;border-radius:12px;gap:6px}.result-row .field{min-width:0}.result-row .field label{font-size:10px}.result-row input{padding:8px;border-radius:10px}.result-row .btn{padding:8px 9px;border-radius:10px;font-size:12px}
+    .fine-player-detail td{background:rgba(100,167,255,.08)}.fine-detail-box{padding:8px;border:1px solid rgba(100,167,255,.24);border-radius:12px}
+    .toast{top:auto;right:18px;left:auto;bottom:22px;transform:none;max-width:min(360px,calc(100vw - 24px));font-size:14px;font-weight:750;text-align:left;line-height:1.4;background:#132238;color:#f5fbff;border:1px solid rgba(127,184,255,.45);border-left:5px solid #1eb980;border-radius:14px;padding:13px 15px;box-shadow:0 16px 42px rgba(19,34,56,.28)}
+    .stats-day-card td,.stats-day-card th{white-space:normal}.muted-name{font-style:italic;color:#53677f;font-weight:600}.missing-list{line-height:1.55}
+    @media(max-width:980px){.day-body{grid-template-columns:repeat(2,1fr)}.result-row{grid-template-columns:1fr 70px 70px}.result-row .btn{grid-column:1/-1}}
+  </style>
+  <style>
+    :root{
+      --bg:#08111f;
+      --text:#eef6ff;
+      --muted:#9fb3cb;
+      --line:rgba(185,211,244,.16);
+      --card:#101c2d;
+      --brand:#36d399;
+      --brand2:#60a5fa;
+      --warn:#facc15;
+      --danger:#fb7185;
+      --shadow:0 18px 42px rgba(0,0,0,.28);
+    }
+    body{
+      background:
+        radial-gradient(circle at 12% 0,rgba(54,211,153,.16),transparent 30%),
+        radial-gradient(circle at 92% 8%,rgba(96,165,250,.18),transparent 34%),
+        linear-gradient(180deg,#08111f 0,#0b1627 48%,#0c1828 100%);
+      color:var(--text);
+    }
+    .hero{
+      background:rgba(8,17,31,.88);
+      border-bottom:1px solid var(--line);
+      box-shadow:0 10px 28px rgba(0,0,0,.22);
+    }
+    .title h1{color:#f8fbff}.title p,.small,.match-meta,.venue{color:var(--muted)}
+    .tabs{
+      position:relative;
+      top:auto;
+      bottom:auto;
+      z-index:6;
+      background:rgba(16,28,45,.86);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      margin:14px 0 12px;
+    }
+    .tab{
+      background:#15243a;
+      color:#cfe2f8;
+      border:1px solid rgba(185,211,244,.13);
+      box-shadow:none;
+    }
+    .tab.active{
+      color:#06111f;
+      background:linear-gradient(135deg,#36d399,#60a5fa);
+      box-shadow:0 10px 24px rgba(54,211,153,.18);
+    }
+    .card,.submitbar,.day-group,.match-card,.stats-day-card,.player-picker-card,.predict-panel,.rank-card{
+      background:linear-gradient(180deg,rgba(18,32,52,.92),rgba(13,25,42,.9));
+      color:var(--text);
+      border-color:var(--line);
+      box-shadow:var(--shadow);
+    }
+    .predict-panel{
+      background:
+        linear-gradient(135deg,rgba(96,165,250,.16),rgba(54,211,153,.08)),
+        rgba(16,28,45,.92);
+    }
+    .field label{color:#cfe2f8}
+    .field input,.field select,.field textarea{
+      background:#0b1627;
+      color:#f8fbff;
+      border-color:rgba(185,211,244,.2);
+    }
+    .field select option{background:#0b1627;color:#f8fbff}
+    .btn{
+      background:#15243a;
+      color:#eaf4ff;
+      border-color:rgba(185,211,244,.18);
+    }
+    .btn.primary{background:linear-gradient(135deg,#36d399,#60a5fa);color:#06111f}
+    .btn.warn{background:rgba(250,204,21,.16);color:#fff4ba;border-color:rgba(250,204,21,.34)}
+    .btn.danger{background:rgba(251,113,133,.15);color:#ffd5dc;border-color:rgba(251,113,133,.34)}
+    .chip{background:#15243a;color:#cfe2f8;border-color:rgba(185,211,244,.18)}
+    .notice{background:rgba(250,204,21,.12);color:#ffeaa0;border-color:rgba(250,204,21,.32)}
+    .okbox{background:rgba(54,211,153,.1);color:#bbf7d0;border-color:rgba(54,211,153,.28)}
+    .match-card{
+      background:linear-gradient(135deg,rgba(96,165,250,.12),rgba(54,211,153,.07));
+      border-color:rgba(185,211,244,.16);
+    }
+    .match-card .teams{color:#f8fbff}
+    .match-card .match-meta,.match-card .venue,.match-card .small{color:#a9bfd9}
+    .match-card .pick{
+      background:#0b1627;
+      color:#eef6ff;
+      border-color:rgba(185,211,244,.18);
+    }
+    .match-card .pick.active{color:#06111f}
+    table{border-spacing:0 7px}
+    th{color:#a9bfd9}
+    td{
+      background:rgba(16,28,45,.86);
+      color:#eef6ff;
+      border-color:rgba(185,211,244,.12);
+    }
+    .status-pill.ok{color:#bbf7d0;background:rgba(54,211,153,.12);border-color:rgba(54,211,153,.28)}
+    .status-pill.bad{color:#fecdd3;background:rgba(251,113,133,.13);border-color:rgba(251,113,133,.3)}
+    .status-pill.warn{color:#fde68a;background:rgba(250,204,21,.12);border-color:rgba(250,204,21,.28)}
+    .toast{
+      background:#f8fbff;
+      color:#0b1627;
+      border:1px solid rgba(96,165,250,.42);
+      border-left:5px solid #36d399;
+      box-shadow:0 18px 44px rgba(0,0,0,.28);
+    }
+    .pill{
+      background:linear-gradient(135deg,rgba(96,165,250,.2),rgba(54,211,153,.12));
+      color:#f8fbff;
+      border-color:rgba(185,211,244,.22);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.03);
+    }
+    #clockPill::before{content:'🕒'}
+    #cloudPill::before{content:'☁️'}
+    .match-card .pick[data-pick="H"]{background:rgba(54,211,153,.15);border-color:rgba(54,211,153,.42);color:#dcfff0}
+    .match-card .pick[data-pick="D"]{background:rgba(250,204,21,.14);border-color:rgba(250,204,21,.48);color:#fff2b8}
+    .match-card .pick[data-pick="A"]{background:rgba(96,165,250,.15);border-color:rgba(96,165,250,.46);color:#dbeafe}
+    .match-card .pick[data-pick].active{background:linear-gradient(135deg,#36d399,#60a5fa);border-color:transparent;color:#06111f;box-shadow:0 8px 18px rgba(54,211,153,.22)}
+    .match-card .pick[data-pick]:disabled{filter:saturate(.72);opacity:.58}
+    .result-status-note{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;border:1px solid rgba(185,211,244,.16)}
+    .result-status-note.pending{color:#fde68a;background:rgba(250,204,21,.12);border-color:rgba(250,204,21,.28)}
+    .result-status-note.done{color:#bbf7d0;background:rgba(54,211,153,.12);border-color:rgba(54,211,153,.28)}
+    .result-row.readonly{grid-template-columns:1.45fr 96px 1fr}
+    #admin .toolbar{gap:7px;margin:9px 0}
+    #admin .btn{min-height:34px;padding:8px 11px;border-radius:11px;font-size:13px}
+    #admin .field{gap:5px;min-width:160px}
+    #admin .field label{font-size:11px}
+    #admin .field input,#admin .field select,#admin .field textarea{padding:9px 10px;border-radius:11px;font-size:13px}
+    #adminBox .admin-only.toolbar{align-items:end}
+    #admin .function-menu .btn{min-height:36px;padding:8px 13px}
+    .qtv-compact{align-items:end}
+    .qtv-compact .result-clear-field{flex:0 1 150px;min-width:140px}
+    #logBox{min-height:92px}
+    #resultPanel h2,#deletePanel h2{margin-top:0}
+    @media(max-width:520px){
+      .tabs{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important}
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="title"><div class="logo">⚽</div><div><h1>Portal dự đoán kết quả World Cup 2026 - P.CN</h1><p><b>Thể lệ:</b> Người chơi dự đoán kết quả <b>Thắng/Hòa/Thua</b>. Thua đóng góp <b>20k/trận</b></p></div></div>
+      <div class="chips"><span class="pill" id="clockPill">Giờ VN: --</span><span class="pill" id="cloudPill">Cloud: chưa cấu hình</span></div>
+    </div>
+  </div>
+  <main class="wrap" id="appRoot">
+    <div class="grid" id="kpiCards"></div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="predict">⚽ Dự đoán</button>
+      <button class="tab" data-tab="stats">📊 Thống kê</button>
+      <button class="tab" data-tab="fines">🏆 Kết quả</button>
+      <button class="tab" data-tab="admin">🔐 QTV</button>
+    </div>
+
+    <section id="predict" class="section active">
+      <div class="predict-panel">
+        <div class="toolbar">
+          <div class="field"><label>Người chơi đang dự đoán</label><select id="playerSelect"></select></div>
+          <div class="field"><label>Chọn ngày dự đoán</label><select id="dateFilter"></select></div>
+          <button class="btn" id="btnPrint">🖨️ In / PDF</button>
+        </div>
+        <div class="notice"><b>Người chơi cần dự đoán kết quả Thắng / Hòa / Thua.</b> Mặc định web hiển thị các trận của ngày hôm nay; chỉ cần chọn tên người chơi, chọn kết quả từng trận rồi bấm <b>Gửi dự đoán</b>. Mỗi người chơi được gửi tối đa <b>3 lần cho mỗi trận</b> trước giờ bóng lăn.</div>
+      </div>
+      <div class="toolbar submitbar">
+        <button class="btn primary" id="btnSubmitPredictions">✅ Gửi dự đoán</button>
+        <span class="chip" id="draftInfo">Chưa có lựa chọn nháp</span>
+      </div>
+      <div id="matchList"></div>
+    </section>
+
+    <section id="stats" class="section">
+      <div class="card pad"><h2>Thống kê số người đã dự đoán</h2>
+        <div class="toolbar function-menu">
+          <button class="btn primary stats-mode-btn" data-stats-mode="current5">5 ngày dự đoán</button>
+          <button class="btn stats-mode-btn" data-stats-mode="next5">5 ngày tiếp theo</button>
+          <button class="btn stats-mode-btn" data-stats-mode="detail">Thống kê chi tiết</button>
+          <div class="field"><label>Tìm người chơi</label><input id="statsPlayerSearch" placeholder="Nhập tên, ví dụ: Nhân, Hằng, Thảo..." /></div>
+          <button class="btn" id="btnResetStatsFilter">Xóa lọc</button>
+        </div>
+        <div id="statsPlayerPicker" class="player-picker-card"></div>
+        <div id="statsTables"></div>
+        <div id="sheetSummaryTables"></div>
+      </div>
+    </section>
+
+    <section id="fines" class="section">
+      <div class="card pad"><h2>Bảng kết quả</h2><div id="fineTables"></div></div>
+    </section>
+
+    <section id="admin" class="section">
+      <div class="card pad" id="adminBox">
+        <h2>QTV</h2>
+        <p class="admin-login-note">Nhập đúng mật khẩu QTV rồi bấm Enter để mở cấu hình, nhập kết quả, kéo/đẩy sheet và reset.</p>
+        <div class="toolbar">
+          <div class="field"><label>Mật khẩu QTV</label><input id="adminPass" type="password" placeholder="Nhập mật khẩu QTV rồi Enter" /></div>
+          <button class="btn" id="btnAdminLogout">Khóa QTV</button>
+        </div>
+        <div class="okbox admin-only">Đã mở QTV. Có thể nhập kết quả, đổi cấu hình cloud, export/import và reset dữ liệu.</div>
+        <div class="notice admin-only">Muốn tất cả người chơi tự lấy/lưu Cloud, hãy dán link Apps Script Web App vào ô dưới rồi bấm Lưu cấu hình. Apps Script bản này đã trỏ sẵn vào Google Sheet ID <span class="code">1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ</span>. Khi deploy chính thức nên dán link Web App vào hằng số <span class="code">CLOUD_URL_DEFAULT</span> trong file HTML.</div>
+        <div class="toolbar admin-only">
+          <div class="field"><label>Apps Script Web App URL</label><input id="cloudUrl" placeholder="https://script.google.com/macros/s/.../exec" /></div>
+          <button class="btn primary" id="btnSaveConfig">Lưu cấu hình</button>
+          <button class="btn" id="btnPingCloud">Test Cloud</button>
+          <button class="btn" id="btnLoadCloud">📥 Lấy Cloud</button>
+          <button class="btn" id="btnSaveCloud">☁️ Lưu Cloud</button>
+          <button class="btn" id="btnExportResultSheetCsv">⬇️ Xuất sheet kết quả</button>
+          <button class="btn" id="btnExportThongKeSheetCsv">⬇️ Xuất sheet Thongkedudoan</button>
+        </div>
+        <div class="toolbar admin-only">
+          <div class="field"><label>Không dự đoán có tính phạt?</label><select id="missingPenalty"><option value="yes">Có · tính như sai</option><option value="no">Không · chỉ thống kê thiếu</option></select></div>
+          <button class="btn primary" id="btnSaveSettings">Lưu luật phạt</button>
+        </div>
+        <div class="toolbar admin-only">
+          <button class="btn primary" id="btnSaveCloud2">☁️ Lưu Cloud ngay</button>
+          <button class="btn" id="btnLoadCloud2">📥 Lấy Cloud ngay</button>
+          <button class="btn primary" id="btnImportDailySheets">🔄 Kéo dự đoán từ sheet ngày</button>
+          <button class="btn warn" id="btnExportDailySheets">⬆️ Đẩy dự đoán ra sheet ngày</button>
+          <a class="btn" href="https://docs.google.com/spreadsheets/d/1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ/edit?usp=sharing" target="_blank" rel="noopener">📄 Mở Google Sheet</a>
+          <button class="btn" id="btnExportJson">⬇️ Export JSON</button>
+          <label class="btn">⬆️ Import JSON<input id="importJson" type="file" accept="application/json" hidden></label>
+          <button class="btn danger" id="btnResetLocal">Xóa dữ liệu máy này</button>
+        </div>
+        <div class="field admin-only"><label>Log thao tác</label><textarea id="logBox" readonly></textarea></div>
+      </div>
+      <div class="toolbar admin-only function-menu">
+        <button class="btn primary admin-panel-btn" data-admin-panel="resultPanel">Nhập kết quả trận đấu</button>
+        <button class="btn danger admin-panel-btn" data-admin-panel="deletePanel">QTV xóa dự đoán người chơi</button>
+      </div>
+      <div class="card pad admin-only admin-panel" id="resultPanel" style="margin-top:12px"><h2>Kết quả trận đấu</h2><p class="small">Hệ thống chỉ lấy kết quả từ sheet <span class="code">KQ_TranDau</span>. QTV cập nhật hoặc xóa tỷ số trong Google Sheet rồi bấm đồng bộ.</p><div class="toolbar qtv-compact"><button class="btn primary" id="btnLoadOnlineResults">Lấy KQ từ Google Sheet</button><div class="field result-clear-field"><label>Xóa KQ ngày</label><select id="adminResultClearDate"></select></div><button class="btn danger" id="btnClearResultDate">Xóa KQ ngày</button></div><div id="resultEditor"></div></div>
+      <div class="card pad admin-only danger-zone admin-panel" id="deletePanel" style="margin-top:12px;display:none">
+        <h2>QTV xóa dự đoán người chơi</h2>
+        <p class="small">Dùng khi người chơi xin dự đoán lại hoặc QTV cần test. Xóa xong bấm Lưu Cloud/Đẩy sheet nếu muốn đồng bộ.</p>
+        <div class="toolbar">
+          <div class="field"><label>Người chơi cần xóa</label><select id="adminDeletePlayer"></select></div>
+          <div class="field"><label>Ngày cần xóa dữ liệu</label><select id="adminDeleteDate"></select></div>
+          <button class="btn danger" id="btnDeletePrediction">Xóa dự đoán</button>
+        </div>
+        <div id="adminPredictionList"></div>
+      </div>
+      <div class="card pad admin-only" style="margin-top:12px">
+        <h2>Hướng dẫn Google Sheet</h2>
+        <ol class="source">
+          <li>Dùng Google Sheet hiện tại của mày: <span class="code">1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ</span>.</li>
+          <li>Vào <b>Extensions → Apps Script</b>, xóa code cũ và dán nội dung file <span class="code">google_apps_script_Code.gs</span> đi kèm.</li>
+          <li>Bấm <b>Deploy → New deployment → Web app</b>. Chọn <b>Execute as: Me</b>, <b>Who has access: Anyone</b>.</li>
+          <li>Copy link Web App dạng <span class="code">/exec</span>, dán vào ô Cloud trong site. Sau đó có thể bấm <b>Kéo dự đoán từ sheet ngày</b> để lấy các tab 01/07, 02/07... về site, hoặc <b>Đẩy dự đoán ra sheet ngày</b> để xuất ngược dữ liệu site ra các tab ngày.</li>
+        </ol>
+      </div>
+    </section>
+
+    <p class="footer-note">Bản dựng: v1.3 · Lịch dự đoán hiển thị theo giờ Việt Nam; có thể sửa trong mảng <span class="code">MATCHES</span> nếu FIFA/nguồn lịch cập nhật thay đổi.</p>
+  </main>
+  <div class="toast" id="toast"></div>
+  <iframe name="cloudSaveFrame" class="hidden-frame" title="cloud save frame"></iframe>
+
+<script>
+'use strict';
+
+// =========================
+// CẤU HÌNH NHANH
+// =========================
+const STORAGE_KEY = 'wc2026_predict_state_v1_20260701';
+const GOOGLE_SHEET_ID = '1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ';
+const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ/edit?usp=sharing';
+const CLOUD_URL_DEFAULT = ''; // Dán link Apps Script Web App /exec vào đây nếu muốn hard-code cho mọi người dùng.
+const ADMIN_PASSWORD = ['V','n','p','T','@','@'].join('');
+const FINE_AMOUNT = 20000;
+const MAX_SUBMISSIONS = 3;
+const PREDICTION_CUTOFF_MINUTES = 5;
+const TZ_LABEL = 'Asia/Bangkok / Việt Nam';
+
+const PLAYERS = [
+  {name:'Vũ Xuân Nhân'},
+  {name:'Lê Hùng Anh'},
+  {name:'Bùi Đức Hà'},
+  {name:'Hoàng Thị Hải Hằng'},
+  {name:'Vũ Lê Xuân Hà'},
+  {name:'Vũ Quốc Toản'},
+  {name:'Nguyễn Trọng Cường'},
+  {name:'Nguyễn Kỳ Thanh'},
+  {name:'Nguyễn Tiến Thắng'},
+  {name:'Nguyễn Bá Thái'},
+  {name:'Nguyễn Thị Thanh Thủy'},
+  {name:'Nguyễn Thị Thanh Chương'},
+  {name:'Vũ Thanh Tùng'},
+  {name:'Dương Thúy Lan'},
+  {name:'Lê Đức Hải'},
+  {name:'Nguyễn Phương Thảo'}
+];
+
+// kickoff là giờ Việt Nam, định dạng YYYY-MM-DDTHH:mm:00+07:00.
+const MATCHES = [
+  {id:'M77', round:'Vòng 1/32', kickoff:'2026-07-01T00:00:00+07:00', home:'Ivory Coast', away:'Norway', venue:'Arlington'},
+  {id:'M78', round:'Vòng 1/32', kickoff:'2026-07-01T04:00:00+07:00', home:'France', away:'Sweden', venue:'New Jersey'},
+  {id:'M79', round:'Vòng 1/32', kickoff:'2026-07-01T08:00:00+07:00', home:'Mexico', away:'Ecuador', venue:'Mexico City'},
+  {id:'M80', round:'Vòng 1/32', kickoff:'2026-07-01T23:00:00+07:00', home:'England', away:'DR Congo', venue:'Atlanta'},
+  {id:'M82', round:'Vòng 1/32', kickoff:'2026-07-02T03:00:00+07:00', home:'Belgium', away:'Senegal', venue:'Seattle'},
+  {id:'M81', round:'Vòng 1/32', kickoff:'2026-07-02T07:00:00+07:00', home:'United States', away:'Bosnia & Herzegovina', venue:'San Francisco Bay Area'},
+  {id:'M84', round:'Vòng 1/32', kickoff:'2026-07-03T02:00:00+07:00', home:'Spain', away:'Austria', venue:'Los Angeles'},
+  {id:'M83', round:'Vòng 1/32', kickoff:'2026-07-03T06:00:00+07:00', home:'Portugal', away:'Croatia', venue:'Toronto'},
+  {id:'M85', round:'Vòng 1/32', kickoff:'2026-07-03T10:00:00+07:00', home:'Switzerland', away:'Algeria', venue:'Vancouver'},
+  {id:'M88', round:'Vòng 1/32', kickoff:'2026-07-04T01:00:00+07:00', home:'Australia', away:'Egypt', venue:'Arlington'},
+  {id:'M86', round:'Vòng 1/32', kickoff:'2026-07-04T05:00:00+07:00', home:'Argentina', away:'Cape Verde', venue:'Miami'},
+  {id:'M87', round:'Vòng 1/32', kickoff:'2026-07-04T08:30:00+07:00', home:'Colombia', away:'Ghana', venue:'Kansas City'},
+  {id:'M90', round:'Vòng 1/16', kickoff:'2026-07-05T00:00:00+07:00', home:'Canada', away:'W75', venue:'Houston'},
+  {id:'M89', round:'Vòng 1/16', kickoff:'2026-07-05T04:00:00+07:00', home:'Paraguay', away:'W77', venue:'Philadelphia'},
+  {id:'M91', round:'Vòng 1/16', kickoff:'2026-07-06T03:00:00+07:00', home:'Brazil', away:'W78', venue:'New Jersey'},
+  {id:'M92', round:'Vòng 1/16', kickoff:'2026-07-06T08:00:00+07:00', home:'W79', away:'W80', venue:'Mexico City'},
+  {id:'M93', round:'Vòng 1/16', kickoff:'2026-07-07T02:00:00+07:00', home:'W83', away:'W84', venue:'Arlington'},
+  {id:'M94', round:'Vòng 1/16', kickoff:'2026-07-07T07:00:00+07:00', home:'W81', away:'W82', venue:'Seattle'},
+  {id:'M95', round:'Vòng 1/16', kickoff:'2026-07-07T23:00:00+07:00', home:'W86', away:'W88', venue:'Atlanta'},
+  {id:'M96', round:'Vòng 1/16', kickoff:'2026-07-08T03:00:00+07:00', home:'W85', away:'W87', venue:'Vancouver'},
+  {id:'M97', round:'Tứ kết', kickoff:'2026-07-10T03:00:00+07:00', home:'W89', away:'W90', venue:'Foxborough'},
+  {id:'M98', round:'Tứ kết', kickoff:'2026-07-11T02:00:00+07:00', home:'W93', away:'W94', venue:'Los Angeles'},
+  {id:'M99', round:'Tứ kết', kickoff:'2026-07-12T04:00:00+07:00', home:'W91', away:'W92', venue:'Miami'},
+  {id:'M100', round:'Tứ kết', kickoff:'2026-07-12T08:00:00+07:00', home:'W95', away:'W96', venue:'Kansas City'},
+  {id:'M101', round:'Bán kết', kickoff:'2026-07-15T02:00:00+07:00', home:'W97', away:'W98', venue:'Arlington'},
+  {id:'M102', round:'Bán kết', kickoff:'2026-07-16T02:00:00+07:00', home:'W99', away:'W100', venue:'Atlanta'},
+  {id:'M103', round:'Tranh hạng ba', kickoff:'2026-07-19T04:00:00+07:00', home:'L101', away:'L102', venue:'Miami'},
+  {id:'M104', round:'Chung kết', kickoff:'2026-07-20T02:00:00+07:00', home:'W101', away:'W102', venue:'New Jersey'}
+];
+
+let state = defaultState();
+let isAdmin = false;
+let draftPredictions = {};
+let selectedResultPlayer = '';
+let activeStatsMode = 'current5';
+let activeAdminPanel = 'resultPanel';
+
+function defaultState(){
+  return {
+    version: 1,
+    app: 'wc2026-predict-20260701',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    players: PLAYERS,
+    matches: MATCHES,
+    predictions: {},
+    results: {},
+    settings: { missingPenalty: true, maxSubmissions: MAX_SUBMISSIONS },
+    audit: []
+  };
+}
+
+function $(id){ return document.getElementById(id); }
+function money(n){ return (n||0).toLocaleString('vi-VN') + 'đ'; }
+function dateKey(iso){ return new Date(iso).toLocaleDateString('sv-SE', {timeZone:'Asia/Bangkok'}); }
+function matchDayKey(m){ return m.day || dateKey(m.kickoff); }
+function displayDay(d){ return d && d !== 'all' ? d.split('-').reverse().slice(0,2).join('/') : 'đang chọn'; }
+function vnDate(iso){ return new Date(iso).toLocaleString('vi-VN', {timeZone:'Asia/Bangkok', hour:'2-digit', minute:'2-digit', day:'2-digit', month:'2-digit', year:'numeric'}); }
+function nowVN(){ return new Date().toLocaleString('vi-VN', {timeZone:'Asia/Bangkok', hour12:false, weekday:'short', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit'}); }
+function todayKeyVN(){ return new Date().toLocaleDateString('sv-SE', {timeZone:'Asia/Bangkok'}); }
+function vnDateTime(iso){ return iso ? new Date(iso).toLocaleString('vi-VN', {timeZone:'Asia/Bangkok', hour12:false, day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit'}) : ''; }
+function escapeHtml(s){ return String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function choiceLabel(v, m){ if(v==='H') return m.home + ' thắng'; if(v==='D') return 'Hòa'; if(v==='A') return m.away + ' thắng'; return 'Chưa chọn'; }
+function resultOfScore(homeScore, awayScore){ if(homeScore === '' || awayScore === '' || homeScore == null || awayScore == null) return ''; const h=Number(homeScore), a=Number(awayScore); if(!Number.isFinite(h)||!Number.isFinite(a)) return ''; if(h>a) return 'H'; if(h<a) return 'A'; return 'D'; }
+function isLocked(match){ return Date.now() >= new Date(match.kickoff).getTime(); }
+function resultStatus(m){ return state.results[m.id]?.status === 'done'; }
+function predictionSubmittedAt(record){ return record?.submittedAt || record?.updatedAt || record?.history?.at?.(-1)?.updatedAt || ''; }
+function isPredictionValidForScoring(match, record){
+  const submittedAt = predictionSubmittedAt(record);
+  if(!record?.choice || !submittedAt) return false;
+  return new Date(submittedAt).getTime() <= new Date(match.kickoff).getTime() - PREDICTION_CUTOFF_MINUTES * 60000;
+}
+function cloudUrl(){ return localStorage.getItem('wc2026_cloud_url') || CLOUD_URL_DEFAULT || ''; }
+function actionUrl(url, action){
+  if(!action) return url;
+  return url + (url.includes('?') ? '&' : '?') + 'action=' + encodeURIComponent(action);
+}
+function matchDayKeys(){ return [...new Set(MATCHES.map(m=>matchDayKey(m)))].sort(); }
+function currentMatchDayKey(){
+  const dates = matchDayKeys();
+  const today = todayKeyVN();
+  return dates.find(d=>d>=today) || dates[0] || 'all';
+}
+
+function toast(msg, ms=3200){ const el=$('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove('show'),ms); log(msg); }
+function log(msg){ const line = '[' + new Date().toLocaleTimeString('vi-VN') + '] ' + msg; if($('logBox')) $('logBox').value = (line + '\n' + $('logBox').value).slice(0, 5000); }
+function audit(action, detail=''){ state.audit.unshift({at:new Date().toISOString(), action, detail}); state.audit = state.audit.slice(0, 80); }
+
+function loadLocal(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(raw){ state = normalizeState(JSON.parse(raw)); }
+  }catch(e){ console.warn(e); toast('Không đọc được dữ liệu local, dùng dữ liệu mặc định.'); state=defaultState(); }
+}
+function saveLocal(){
+  state.updatedAt = new Date().toISOString();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+function normalizeState(s){
+  const d=defaultState();
+  return {
+    ...d,
+    ...s,
+    players: PLAYERS,
+    matches: MATCHES,
+    predictions: s?.predictions || {},
+    results: s?.results || {},
+    settings: {...d.settings, ...(s?.settings || {})},
+    audit: Array.isArray(s?.audit) ? s.audit : []
+  };
+}
+function mergeState(remote){
+  if(!remote) return;
+  remote = normalizeState(remote);
+  const merged = normalizeState(state);
+  for(const [mid, byPlayer] of Object.entries(remote.predictions || {})){
+    merged.predictions[mid] = merged.predictions[mid] || {};
+    for(const [p, r] of Object.entries(byPlayer || {})){
+      const old = merged.predictions[mid][p];
+      if(!old || new Date(r.updatedAt || 0) >= new Date(old.updatedAt || 0)) merged.predictions[mid][p]=r;
+    }
+  }
+  for(const [mid, r] of Object.entries(remote.results || {})){
+    const old = merged.results[mid];
+    if(!old || new Date(r.updatedAt || 0) >= new Date(old.updatedAt || 0)) merged.results[mid]=r;
+  }
+  merged.settings = {...merged.settings, ...remote.settings};
+  merged.audit = [...(remote.audit||[]), ...(merged.audit||[])].slice(0,80);
+  state = merged;
+  saveLocal();
+}
+
+function render(){
+  document.body.classList.toggle('admin', isAdmin);
+  $('clockPill').textContent = 'Giờ VN: ' + nowVN();
+  $('cloudPill').textContent = cloudUrl() ? 'Cloud: đã cấu hình' : 'Cloud: chưa cấu hình';
+  renderPlayers(); renderDateFilter(); renderKpis(); renderMatches(); renderStats(); renderFines(); renderResults(); renderAdminFields();
+}
+function getSelectedPlayer(){ return ($('playerSelect')?.value || '').trim(); }
+function renderPlayers(){
+  const current=getSelectedPlayer();
+  const html = ['<option value="">-- Chọn tên người chơi --</option>', ...PLAYERS.map(p=>`<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)}</option>`)].join('');
+  if($('playerSelect').dataset.html !== html){
+    $('playerSelect').innerHTML = html;
+    $('playerSelect').dataset.html = html;
+  }
+  if(current && PLAYERS.some(p=>p.name===current)) $('playerSelect').value=current;
+  else $('playerSelect').value='';
+}
+function renderDateFilter(){
+  const dates=matchDayKeys();
+  const current = ($('dateFilter').value && dates.includes($('dateFilter').value)) ? $('dateFilter').value : currentMatchDayKey();
+  const html = '<option value="all">Tất cả ngày</option>' + dates.map(d=>`<option value="${d}">${d.split('-').reverse().join('/')}</option>`).join('');
+  if($('dateFilter').dataset.html !== html){
+    $('dateFilter').innerHTML = html;
+    $('dateFilter').dataset.html = html;
+  }
+  $('dateFilter').value = dates.includes(current) ? current : 'all';
+  renderStatsFilterOptions(dates);
+}
+function renderStatsFilterOptions(dates){
+  const el = $('statsDateFilter');
+  if(!el) return;
+  const current = el.value || 'all';
+  el.innerHTML = '<option value="all">Tất cả ngày</option>' + dates.map(d=>`<option value="${d}">${d.split('-').reverse().join('/')}</option>`).join('');
+  el.value = dates.includes(current) ? current : 'all';
+}
+function filteredMatches(){
+  const d=$('dateFilter').value || 'all';
+  return MATCHES.filter(m => d==='all' || matchDayKey(m)===d);
+}
+function predCount(matchId){ return Object.keys(state.predictions[matchId] || {}).length; }
+function predRecord(matchId, player){ return state.predictions[matchId]?.[player] || null; }
+function totalPredictionRecords(){ return Object.values(state.predictions || {}).reduce((sum, byPlayer)=>sum + Object.keys(byPlayer || {}).length, 0); }
+function submitCount(matchId, player){
+  const r = predRecord(matchId, player);
+  if(!r) return 0;
+  const c = Number(r.submitCount || 0);
+  if(c > 0) return c;
+  if(Array.isArray(r.history) && r.history.length) return r.history.length;
+  return r.choice ? 1 : 0;
+}
+function remainingSubmits(matchId, player){ return Math.max(0, MAX_SUBMISSIONS - submitCount(matchId, player)); }
+function draftChoice(matchId){ return draftPredictions[matchId] || ''; }
+function activeChoice(matchId, player){ return draftChoice(matchId) || predRecord(matchId, player)?.choice || ''; }
+function resultRate(row){ const den = row.correct + row.wrong; return den ? Math.round(row.correct * 100 / den) + '%' : '--'; }
+function doneMatches(){ return MATCHES.filter(m=>resultStatus(m)); }
+function fineRows(){
+  const rows = PLAYERS.map(p=>({name:p.name, wrong:0, missing:0, correct:0, total:0, byDay:{}}));
+  const map = Object.fromEntries(rows.map(r=>[r.name,r]));
+  for(const m of MATCHES){
+    const res = state.results[m.id];
+    if(!res || res.status!=='done') continue;
+    const dk = matchDayKey(m);
+    for(const p of PLAYERS){
+      const r = map[p.name];
+      r.byDay[dk] = r.byDay[dk] || {wrong:0, missing:0, correct:0, total:0};
+      const rec = state.predictions[m.id]?.[p.name];
+      const pred = isPredictionValidForScoring(m, rec) ? rec.choice : '';
+      if(!pred){
+        r.missing++; r.byDay[dk].missing++;
+        if(state.settings.missingPenalty){ r.total += FINE_AMOUNT; r.byDay[dk].total += FINE_AMOUNT; }
+      }else if(pred === res.result){
+        r.correct++; r.byDay[dk].correct++;
+      }else{
+        r.wrong++; r.total += FINE_AMOUNT; r.byDay[dk].wrong++; r.byDay[dk].total += FINE_AMOUNT;
+      }
+    }
+  }
+  return rows;
+}
+function renderKpis(){
+  const rows = fineRows();
+  const done = doneMatches().length;
+  const totalFine = rows.reduce((s,r)=>s+r.total,0);
+  const topCorrect = [...rows].sort((a,b)=>b.correct-a.correct || a.wrong-b.wrong || a.total-b.total)[0];
+  const topWrong = [...rows].sort((a,b)=>b.wrong-a.wrong || a.correct-b.correct || a.total-b.total)[0];
+  const todayMatches = MATCHES.filter(m=>matchDayKey(m)===todayKeyVN()).length;
+  $('kpiCards').innerHTML = [
+    ['Top 1 đoán đúng', topCorrect ? topCorrect.name : '--', topCorrect ? `${topCorrect.correct} đúng` : 'Chưa có dữ liệu', 'Người có nhiều trận đúng nhất'],
+    ['Top 1 đoán sai', topWrong ? topWrong.name : '--', topWrong ? `${topWrong.wrong} sai` : 'Chưa có dữ liệu', 'Người có nhiều trận sai nhất'],
+    ['Số trận có KQ', done + '/' + MATCHES.length, todayMatches ? todayMatches + ' trận hôm nay' : 'Đã nhập kết quả', 'Kết quả đã nhập cho các trận'],
+    ['Tổng đóng góp', money(totalFine), 'Theo luật hiện tại', 'Sai hoặc thiếu dự đoán']
+  ].map(x=>`<div class="card pad stat"><span>${x[0]}</span><b>${escapeHtml(x[1])}</b><div class="stat-player">${escapeHtml(x[2])}</div><div class="stat-value">${escapeHtml(x[3])}</div></div>`).join('');
+}
+function renderMatches(){
+  const player=getSelectedPlayer();
+  const ms = filteredMatches();
+  const dates = [...new Set(ms.map(m=>matchDayKey(m)))];
+  const draftNum = Object.keys(draftPredictions).filter(mid => ms.some(m=>m.id===mid)).length;
+  if($('draftInfo')) $('draftInfo').textContent = draftNum ? `Đang có ${draftNum} lựa chọn nháp · bấm Gửi dự đoán để lưu` : 'Chưa có lựa chọn nháp';
+  const needPlayerNotice = player ? '' : '<div class="notice"><b>Chọn tên người chơi ở phía trên để bắt đầu dự đoán.</b> Danh sách trận ngày hiện tại vẫn hiển thị sẵn bên dưới.</div>';
+  $('matchList').innerHTML = needPlayerNotice + dates.map((d, di)=>{
+    const dayMatches = ms.filter(m=>matchDayKey(m)===d);
+    const cards = dayMatches.map(m=>{
+      const saved = predRecord(m.id, player);
+      const draft = draftChoice(m.id);
+      const pred = draft || saved?.choice || '';
+      const done = resultStatus(m);
+      const locked = isLocked(m);
+      const countSubmit = submitCount(m.id, player);
+      const remain = remainingSubmits(m.id, player);
+      const submittedAt = predictionSubmittedAt(saved);
+      const disabled = !player || locked || done || remain <= 0;
+      const res = state.results[m.id];
+      let badge = !player ? '<span class="badge lock">Chọn người chơi</span>' : done ? `<span class="badge done">KQ: ${res.homeScore}-${res.awayScore} · ${choiceLabel(res.result,m)}</span>` : locked ? '<span class="badge lock">Đã khóa chọn</span>' : remain<=0 ? '<span class="badge bad">Đã dùng đủ 3 lần gửi</span>' : '<span class="badge open">Đang mở chọn</span>';
+      const count=predCount(m.id); const pct=Math.round(count*100/PLAYERS.length);
+      return `<div class="match-card daytone-${di%6}">
+        <div class="match-head"><div><div class="match-meta">${m.id} · ${m.round} · ${vnDate(m.kickoff)}</div><div class="teams">${escapeHtml(m.home)} <span class="small">vs</span> ${escapeHtml(m.away)}</div><div class="venue">${escapeHtml(m.venue)} · ${TZ_LABEL}</div></div>${badge}</div>
+        <div class="pick-row">
+          <button class="pick ${pred==='H'?'active':''} ${draft==='H'?'draft':''}" ${disabled?'disabled':''} data-pick="H" data-mid="${m.id}">${escapeHtml(m.home)} thắng</button>
+          <button class="pick ${pred==='D'?'active':''} ${draft==='D'?'draft':''}" ${disabled?'disabled':''} data-pick="D" data-mid="${m.id}">Hòa</button>
+          <button class="pick ${pred==='A'?'active':''} ${draft==='A'?'draft':''}" ${disabled?'disabled':''} data-pick="A" data-mid="${m.id}">${escapeHtml(m.away)} thắng</button>
+        </div>
+        <div style="margin-top:12px" class="small">Đã dự đoán: <b>${count}/${PLAYERS.length}</b> người · Lựa chọn hiện tại: <b>${escapeHtml(choiceLabel(pred,m))}</b>${draft ? ' <span class="fine-warn">(chưa gửi)</span>' : ''} · Đã gửi: <b>${countSubmit}/${MAX_SUBMISSIONS}</b>, còn <b>${remain}</b> lần${submittedAt ? ' · Giờ gửi: <b>'+escapeHtml(vnDateTime(submittedAt))+'</b>' : ''}</div><div class="progress" style="margin-top:8px"><div class="bar" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join('');
+    return `<div class="day-group"><div class="day-head"><h3>Ngày ${displayDay(d)}</h3><span class="small">${dayMatches.length} trận · màu nhóm ngày ${di+1}</span></div><div class="day-body">${cards}</div></div>`;
+  }).join('') || '<div class="card pad">Không có trận trong ngày lọc.</div>';
+}
+function matchDistribution(m){
+  const by = state.predictions[m.id] || {}; let H=0,D=0,A=0;
+  Object.values(by).forEach(r=>{ if(r.choice==='H')H++; if(r.choice==='D')D++; if(r.choice==='A')A++; });
+  return {H,D,A,missing: PLAYERS.length - Object.keys(by).length};
+}
+function buildResultsSheetRows(){
+  return MATCHES.filter(m=>resultStatus(m)).map(m=>{
+    const res = state.results[m.id];
+    let correct=0, wrong=0, missing=0;
+    PLAYERS.forEach(p=>{
+      const rec = state.predictions[m.id]?.[p.name];
+      const pred = isPredictionValidForScoring(m, rec) ? rec.choice : '';
+      if(!pred) missing++;
+      else if(pred===res.result) correct++;
+      else wrong++;
+    });
+    return {matchId:m.id, date:matchDayKey(m), home:m.home, away:m.away, homeScore:res.homeScore, awayScore:res.awayScore, result:choiceLabel(res.result,m), correct, wrong, missing, totalPenalty:(wrong+missing)*FINE_AMOUNT};
+  });
+}
+function buildThongKeDuDoanRows(mode='current5'){
+  const days = getStatsDateRange(mode);
+  return days.map(day=>{
+    const dayMatches = MATCHES.filter(m=>matchDayKey(m)===day);
+    const missingPlayers = PLAYERS.filter(player=>dayMatches.some(m=>!state.predictions[m.id]?.[player.name])).map(player=>player.name);
+    const predictedPlayers = PLAYERS.filter(player=>!missingPlayers.includes(player.name)).map(player=>player.name);
+    return {day, dayLabel: displayDay(day), matchCount: dayMatches.length, totalPlayers: PLAYERS.length, predictedCount: predictedPlayers.length, missingCount: missingPlayers.length, missingPlayers, predictedPlayers};
+  });
+}
+function buildThongKeDuDoanExport(mode='current5'){
+  const dayRows = buildThongKeDuDoanRows(mode);
+  const headers = dayRows.map(r=>'Chưa dự đoán ' + r.dayLabel);
+  const maxRows = Math.max(1, ...dayRows.map(r=>r.missingPlayers.length));
+  const rows = Array.from({length:maxRows}, (_,i)=>dayRows.map(r=>r.missingPlayers[i] || ''));
+  return {headers, rows, dayRows};
+}
+function buildThongKeDuDoanExportRows(mode='current5'){
+  return buildThongKeDuDoanExport(mode).rows;
+}
+function renderSheetSummary(){
+  const resultRows = buildResultsSheetRows();
+  const exportData = buildThongKeDuDoanExport(activeStatsMode === 'next5' ? 'next5' : 'current5');
+  const resultTable = `<h3>Sheet dữ liệu kết quả</h3><div style="overflow:auto"><table><thead><tr><th>Mã trận</th><th>Ngày</th><th>Trận</th><th>Tỷ số</th><th>Kết quả</th><th>Đúng</th><th>Sai</th><th>Thiếu</th><th class="right">Tổng đóng góp</th></tr></thead><tbody>${resultRows.map(r=>`<tr><td><b>${escapeHtml(r.matchId)}</b></td><td>${escapeHtml(r.date)}</td><td>${escapeHtml(r.home)} vs ${escapeHtml(r.away)}</td><td>${r.homeScore}-${r.awayScore}</td><td>${escapeHtml(r.result)}</td><td>${r.correct}</td><td>${r.wrong}</td><td>${r.missing}</td><td class="right"><b>${money(r.totalPenalty)}</b></td></tr>`).join('') || '<tr><td colspan="9">Chưa có trận nào có kết quả.</td></tr>'}</tbody></table></div>`;
+  const missingTable = `<h3>Sheet thongkedudoan</h3><div style="overflow:auto"><table><thead><tr>${exportData.headers.map(h=>`<th>${escapeHtml(h)}</th>`).join('')}</tr></thead><tbody>${exportData.rows.map(row=>`<tr>${row.map(v=>`<td>${escapeHtml(v)}</td>`).join('')}</tr>`).join('') || '<tr><td>Không có dữ liệu thiếu dự đoán trong khung này.</td></tr>'}</tbody></table></div>`;
+  if($('sheetSummaryTables')) $('sheetSummaryTables').innerHTML = resultTable + missingTable;
+}
+function getStatsDateRange(mode = activeStatsMode || 'current5'){
+  const dates = matchDayKeys();
+  if(!dates.length) return [];
+  const baseDay = currentMatchDayKey();
+  const baseIndex = Math.max(0, dates.indexOf(baseDay));
+  const offset = mode === 'next5' ? 5 : 0;
+  return dates.slice(baseIndex + offset, baseIndex + offset + 5);
+}
+function renderStatsPlayerPicker(){
+  const wrap = $('statsPlayerPicker');
+  if(!wrap) return;
+  const q = normText($('statsPlayerSearch')?.value || '');
+  wrap.innerHTML = `<div class="small">Chọn nhanh người chơi</div><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">${PLAYERS.map(p=>`<button class="pick-player-btn ${q && normText(p.name).includes(q) ? 'active' : ''}" data-player-name="${escapeHtml(p.name)}">${escapeHtml(p.name)}</button>`).join('')}</div>`;
+}
+function renderStats(){
+  document.querySelectorAll('.stats-mode-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.statsMode===activeStatsMode));
+  const rangeMode = activeStatsMode === 'next5' ? 'next5' : 'current5';
+  const dates = getStatsDateRange(rangeMode);
+  const q = normText($('statsPlayerSearch')?.value || '');
+  const playerList = PLAYERS.filter(p => !q || normText(p.name).includes(q));
+  const matchesInScope = MATCHES.filter(m=>dates.includes(matchDayKey(m)));
+  const expected = matchesInScope.length * playerList.length;
+  const submitted = matchesInScope.reduce((sum,m)=>sum + playerList.filter(p=>state.predictions[m.id]?.[p.name]).length, 0);
+  const missingTotal = Math.max(0, expected - submitted);
+  const rangeSummaryRows = dates.map(d=>{
+    const ms = MATCHES.filter(m=>matchDayKey(m)===d);
+    const missingPlayers = playerList.filter(p=>ms.some(m=>!state.predictions[m.id]?.[p.name])).map(p=>p.name);
+    const predictedPlayers = playerList.filter(p=>!missingPlayers.includes(p.name)).map(p=>p.name);
+    const missingHtml = missingPlayers.length ? missingPlayers.map(name=>`<span class="muted-name" title="${escapeHtml(name)}">${escapeHtml(shortPlayerName(name))}</span>`).join(', ') : '<span class="fine-ok">Đủ người</span>';
+    return `<tr><td><b>${escapeHtml(displayDay(d))}</b></td><td>${ms.length}</td><td>${predictedPlayers.length}/${playerList.length}</td><td>${missingPlayers.length}</td><td class="missing-list">${missingHtml}</td></tr>`;
+  }).join('');
+  const summary = `<div class="stats-day-card"><h3>${activeStatsMode==='next5'?'5 ngày tiếp theo':'5 ngày dự đoán'}</h3><div style="overflow:auto"><table><thead><tr><th>Ngày</th><th>Số trận</th><th>Đã dự đoán</th><th>Chưa dự đoán</th><th>Người còn thiếu</th></tr></thead><tbody>${rangeSummaryRows || '<tr><td colspan="5">Không có dữ liệu trong khung này.</td></tr>'}</tbody></table></div></div>`;
+  if(activeStatsMode !== 'detail'){
+    $('statsTables').innerHTML = summary;
+    renderStatsPlayerPicker();
+    renderSheetSummary();
+    return;
+  }
+  const daySections = dates.map(d=>{
+    const ms = MATCHES.filter(m=>matchDayKey(m)===d);
+    const matchPenaltyTotals = ms.map(m=>{
+      let total=0;
+      playerList.forEach(p=>{
+        const rec = state.predictions[m.id]?.[p.name];
+        const pred = isPredictionValidForScoring(m, rec) ? rec.choice : '';
+        const res = state.results[m.id];
+        if(pred && res?.status==='done' && pred !== res.result) total += FINE_AMOUNT;
+        else if(!pred && res?.status==='done') total += FINE_AMOUNT;
+      });
+      return total;
+    });
+    const totalDayPenalty = matchPenaltyTotals.reduce((sum,v)=>sum+v,0);
+    const rows = playerList.map(p=>{
+      const cells = ms.map(m=>{
+        const rec = state.predictions[m.id]?.[p.name];
+        const pred = isPredictionValidForScoring(m, rec) ? rec.choice : '';
+        const res = state.results[m.id];
+        let content = rec?.choice && !pred ? '<span class="status-pill bad">Bỏ phiếu muộn</span>' : '<span class="status-pill warn">Chưa dự đoán</span>';
+        let penalty = 0;
+        if(pred){
+          if(!res || res.status !== 'done') content = '<span class="status-pill warn">Đã dự đoán</span>';
+          else if(pred === res.result) content = '<span class="status-pill ok">Đúng</span>';
+          else { content = '<span class="status-pill bad">Sai · ' + money(FINE_AMOUNT) + '</span>'; penalty = FINE_AMOUNT; }
+        }
+        return {content, penalty};
+      });
+      const rowPenalty = cells.reduce((sum,c)=>sum + c.penalty,0);
+      return `<tr><td><b>${escapeHtml(p.name)}</b></td>${cells.map(c=>`<td>${c.content}</td>`).join('')}<td class="fine-bad"><b>${money(rowPenalty)}</b></td></tr>`;
+    }).join('');
+    return `<div class="stats-day-card"><h3>Ngày ${displayDay(d)}</h3><div style="overflow:auto"><table><thead><tr><th>Người chơi</th>${ms.map(m=>`<th><b>${escapeHtml(m.id)}</b><br><span class="small">${escapeHtml(m.home)} vs ${escapeHtml(m.away)}</span></th>`).join('')}<th>Tổng phạt</th></tr></thead><tbody><tr class="day-summary-row"><td><b>Tổng theo trận</b></td>${matchPenaltyTotals.map(v=>`<td>${money(v)}</td>`).join('')}<td><b>${money(totalDayPenalty)}</b></td></tr>${rows}</tbody></table></div></div>`;
+  }).join('');
+  $('statsTables').innerHTML = summary + '<div class="small">Mỗi ô cho biết trạng thái dự đoán; nếu sai sẽ hiện thêm số tiền phạt.</div>' + daySections;
+  renderStatsPlayerPicker();
+  renderSheetSummary();
+}
+function normText(s){ return String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d'); }
+function shortPlayerName(name){
+  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if(!parts.length) return '';
+  const two = parts.slice(-2).join(' ');
+  const sameTwo = PLAYERS.filter(p=>String(p.name).trim().split(/\s+/).slice(-2).join(' ')===two);
+  return sameTwo.length===1 ? two : name;
+}
+function detailForPlayer(player){
+  return MATCHES.filter(m=>resultStatus(m)).map(m=>{
+    const rec=state.predictions[m.id]?.[player];
+    const pred=isPredictionValidForScoring(m, rec) ? rec.choice : '';
+    const res=state.results[m.id];
+    let status, fine=0;
+    if(!pred){ status=rec?.choice ? 'Muộn' : 'Thiếu'; fine=state.settings.missingPenalty ? FINE_AMOUNT : 0; }
+    else if(pred===res.result){ status='Đúng'; }
+    else { status='Sai'; fine=FINE_AMOUNT; }
+    return {m,pred,res,status,fine};
+  });
+}
+function renderFines(){
+  const rows=fineRows();
+  if(selectedResultPlayer && !PLAYERS.some(p=>p.name===selectedResultPlayer)) selectedResultPlayer = '';
+  const total=rows.reduce((s,r)=>s+r.total,0);
+  const body=rows.map((r,i)=>{
+    const detailRows = selectedResultPlayer===r.name ? detailForPlayer(r.name).map(x=>`<tr><td>${x.m.id}<br><span class="small">${vnDate(x.m.kickoff)}</span></td><td>${escapeHtml(x.m.home)} vs ${escapeHtml(x.m.away)}</td><td>${escapeHtml(choiceLabel(x.pred,x.m))}</td><td>${x.res.homeScore}-${x.res.awayScore}<br><span class="small">${escapeHtml(choiceLabel(x.res.result,x.m))}</span></td><td><span class="status-pill ${x.status==='Đúng'?'ok':x.status==='Sai'?'bad':'warn'}">${x.status}</span></td><td class="right">${money(x.fine)}</td></tr>`).join('') : '';
+    const detail = selectedResultPlayer===r.name ? `<tr class="fine-player-detail"><td colspan="7"><div class="fine-detail-box"><b>Chi tiết: ${escapeHtml(r.name)}</b><div style="overflow:auto;margin-top:8px"><table><thead><tr><th>Mã trận</th><th>Trận</th><th>Dự đoán</th><th>Kết quả</th><th>Trạng thái</th><th class="right">Đóng góp</th></tr></thead><tbody>${detailRows || '<tr><td colspan="6">Chưa có trận nào nhập kết quả.</td></tr>'}</tbody></table></div></div></td></tr>` : '';
+    return `<tr><td>${i+1}</td><td><button class="name-link" data-player-detail="${escapeHtml(r.name)}">${escapeHtml(r.name)}</button><br><span class="small">${selectedResultPlayer===r.name?'bấm lại để ẩn':'bấm tên để xem chi tiết'}</span></td><td class="center fine-ok">${r.correct}</td><td class="center fine-bad">${r.wrong}</td><td class="center fine-warn">${r.missing}</td><td class="center"><b>${resultRate(r)}</b></td><td class="right"><b>${money(r.total)}</b></td></tr>${detail}`;
+  }).join('');
+  const topGold = [...rows].sort((a,b)=>b.correct-a.correct || a.wrong-b.wrong || a.total-b.total).slice(0,5);
+  const topBad = [...rows].sort((a,b)=>b.wrong-a.wrong || a.correct-b.correct || a.total-b.total).slice(0,5);
+  const goldList = topGold.map((r,i)=>`<li class="rank-item ${i===0?'top1':''}"><div class="rank-pos">${i+1}</div><div class="rank-info"><strong>${escapeHtml(r.name)}</strong><span>${r.correct} đúng · ${r.wrong} sai</span></div><div class="rank-score">${r.correct}✓</div></li>`).join('');
+  const badList = topBad.map((r,i)=>`<li class="rank-item ${i===0?'top1':''}"><div class="rank-pos">${i+1}</div><div class="rank-info"><strong>${escapeHtml(r.name)}</strong><span>${r.wrong} sai · ${r.correct} đúng</span></div><div class="rank-score">${r.wrong}✕</div></li>`).join('');
+  $('fineTables').innerHTML = `<div class="kpi-row"><div class="card pad stat"><span>Tổng đóng góp</span><b>${money(total)}</b><p class="small">${doneMatches().length} trận đã nhập kết quả</p></div><div class="card pad stat"><span>Mức đóng góp</span><b>${money(FINE_AMOUNT)}</b><p class="small">/ trận sai</p></div><div class="card pad stat"><span>Tỷ lệ đúng</span><b>${overallResultRate()}</b><p class="small">Tính trên các dự đoán đã có kết quả</p></div></div>
+  <div class="rank-grid"><div class="rank-card good"><h4><span class="rank-icon">🏅</span>Top 5 bàn tay vàng</h4><ul class="rank-list">${goldList || '<li class="rank-item"><div class="rank-info"><strong>Chưa có dữ liệu</strong><span>Hãy đợi kết quả trận đầu tiên</span></div></li>'}</ul></div><div class="rank-card bad"><h4><span class="rank-icon">⚠️</span>Top 5 bàn tay thối</h4><ul class="rank-list">${badList || '<li class="rank-item"><div class="rank-info"><strong>Chưa có dữ liệu</strong><span>Hãy đợi kết quả trận đầu tiên</span></div></li>'}</ul></div></div>
+  <h3>Tổng hợp theo người chơi</h3><div style="overflow:auto"><table><thead><tr><th>STT</th><th>Người chơi</th><th class="center">Đúng</th><th class="center">Sai</th><th class="center">Thiếu</th><th class="center">Tỷ lệ đúng</th><th class="right">Tổng đóng góp</th></tr></thead><tbody>${body}</tbody></table></div>`;
+}
+function overallResultRate(){
+  const rows=fineRows(); const c=rows.reduce((s,r)=>s+r.correct,0); const w=rows.reduce((s,r)=>s+r.wrong,0); const den=c+w; return den ? Math.round(c*100/den)+'%' : '--';
+}
+function renderResults(){
+  const days = matchDayKeys();
+  $('resultEditor').innerHTML = days.map(d=>{
+    const rows = MATCHES.filter(m=>matchDayKey(m)===d).map(m=>{
+      const r=state.results[m.id] || {};
+      const done = r.status==='done';
+      const score = done ? `${r.homeScore}-${r.awayScore}` : '--';
+      const note = done ? `Kết quả: ${choiceLabel(r.result,m)}` : 'Chưa có kết quả';
+      return `<div class="result-row readonly"><div><b>${m.id} · ${escapeHtml(m.home)} vs ${escapeHtml(m.away)}</b><br><span class="small">${vnDate(m.kickoff)} · ${escapeHtml(m.venue)}</span></div><div><b>${score}</b></div><div><span class="result-status-note ${done?'done':'pending'}">${escapeHtml(note)}</span></div></div>`;
+    }).join('');
+    return `<div class="result-day-group"><h3 class="result-day-title">Ngày ${displayDay(d)}</h3>${rows}</div>`;
+  }).join('');
+}
+function renderAdminFields(){
+  if($('cloudUrl')) $('cloudUrl').value = cloudUrl();
+  if($('missingPenalty')) $('missingPenalty').value = state.settings.missingPenalty ? 'yes' : 'no';
+  document.querySelectorAll('.admin-panel').forEach(el=>el.style.display = el.id===activeAdminPanel ? '' : 'none');
+  document.querySelectorAll('.admin-panel-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.adminPanel===activeAdminPanel));
+  renderAdminDeleteTools();
+  renderResultClearDate();
+}
+
+function renderResultClearDate(){
+  const el = $('adminResultClearDate');
+  if(!el) return;
+  const dates = matchDayKeys();
+  const current = el.value || ($('dateFilter')?.value !== 'all' ? $('dateFilter')?.value : '') || currentMatchDayKey();
+  el.innerHTML = dates.map(d=>`<option value="${d}">${displayDay(d)}</option>`).join('');
+  el.value = dates.includes(current) ? current : (dates[0] || currentMatchDayKey());
+}
+
+function renderAdminDeleteTools(){
+  const playerEl=$('adminDeletePlayer'), dateEl=$('adminDeleteDate'), listEl=$('adminPredictionList');
+  if(!playerEl || !dateEl || !listEl) return;
+  const currentPlayer = playerEl.value || ($('playerSelect')?.value || PLAYERS[0].name);
+  playerEl.innerHTML = PLAYERS.map(p=>`<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)}</option>`).join('');
+  playerEl.value = PLAYERS.some(p=>p.name===currentPlayer) ? currentPlayer : PLAYERS[0].name;
+  const player = playerEl.value;
+  const currentDate = dateEl.value || ($('dateFilter')?.value || currentMatchDayKey());
+  const playerPreds = MATCHES.filter(m=>state.predictions[m.id]?.[player]);
+  const dates = matchDayKeys();
+  dateEl.innerHTML = dates.map(d=>`<option value="${d}">${displayDay(d)}</option>`).join('');
+  dateEl.value = dates.includes(currentDate) ? currentDate : currentMatchDayKey();
+  const selectedDate = dateEl.value;
+  const rows = playerPreds.filter(m=>matchDayKey(m)===selectedDate).map(m=>{
+    const r=state.predictions[m.id][player];
+    return `<tr><td><b>${m.id}</b><br><span class="small">${displayDay(matchDayKey(m))} · ${vnDate(m.kickoff)}</span></td><td>${escapeHtml(m.home)} vs ${escapeHtml(m.away)}</td><td><b>${escapeHtml(choiceLabel(r.choice,m))}</b><br><span class="small">Đã gửi ${submitCount(m.id, player)}/${MAX_SUBMISSIONS} lần</span></td></tr>`;
+  }).join('');
+  const statusRows = dates.map(d=>{
+    const ms = MATCHES.filter(m=>matchDayKey(m)===d);
+    const predicted = ms.filter(m=>state.predictions[m.id]?.[player]).length;
+    const cls = predicted===ms.length ? 'ok' : predicted ? 'warn' : 'bad';
+    const label = predicted===ms.length ? 'Đã đủ' : predicted ? 'Còn thiếu' : 'Chưa dự đoán';
+    return `<tr><td><b>${displayDay(d)}</b></td><td>${predicted}/${ms.length}</td><td><span class="status-pill ${cls}">${label}</span></td></tr>`;
+  }).join('');
+  listEl.innerHTML = `<h3>Trạng thái dự đoán của ${escapeHtml(player)}</h3><div style="overflow:auto"><table><thead><tr><th>Ngày</th><th>Đã dự đoán</th><th>Trạng thái</th></tr></thead><tbody>${statusRows}</tbody></table></div>
+  <h3>Dữ liệu trong ngày ${displayDay(selectedDate)}</h3><div style="overflow:auto"><table><thead><tr><th>Mã trận</th><th>Trận</th><th>Dự đoán hiện tại</th></tr></thead><tbody>${rows || '<tr><td colspan="3"><span class="fine-warn">Người chơi này chưa có dự đoán đã gửi trong ngày đang chọn.</span></td></tr>'}</tbody></table></div>`;
+}
+
+function setPrediction(mid, choice){
+  const m=MATCHES.find(x=>x.id===mid); const player=getSelectedPlayer();
+  if(!m || !player){ toast('Chọn tên người chơi trước khi dự đoán.'); return; }
+  if(isLocked(m) || resultStatus(m)){ toast('Trận này đã khóa, không sửa dự đoán.'); return; }
+  draftPredictions[mid] = choice;
+  render(); toast('Đã chọn nháp ' + choiceLabel(choice,m) + '. Bấm Gửi dự đoán để lưu.');
+}
+async function submitPredictions(){
+  const player=getSelectedPlayer();
+  if(!player){ toast('Vui lòng chọn tên người chơi trước khi gửi dự đoán.'); return; }
+  const ms=filteredMatches().filter(m=>!isLocked(m) && !resultStatus(m));
+  const missing = ms.filter(m=>!(draftPredictions[m.id] || predRecord(m.id, player)?.choice));
+  if(missing.length){ toast('Bạn cần chọn đủ các trận trong ngày đang xem trước khi gửi: ' + missing.map(m=>m.id).join(', '), 6000); return; }
+  const selected=ms.filter(m=>draftPredictions[m.id] || predRecord(m.id, player)?.choice);
+  if(!selected.length){ toast('Chưa có lựa chọn nháp nào để gửi.'); return; }
+  let saved=0, skipped=[];
+  ms.forEach(m=>{
+    const choice=(draftPredictions[m.id] || predRecord(m.id, player)?.choice || '').toString();
+    if(!choice){ skipped.push(m.id + ' chưa chọn'); return; }
+    if(isLocked(m) || resultStatus(m)){ skipped.push(m.id + ' đã khóa'); return; }
+    const cnt=submitCount(m.id, player);
+    if(cnt >= MAX_SUBMISSIONS){ skipped.push(m.id + ' đã đủ 3 lần'); return; }
+    state.predictions[m.id] = state.predictions[m.id] || {};
+    const old = state.predictions[m.id][player] || {};
+    const now = new Date().toISOString();
+    const history = Array.isArray(old.history) ? old.history.slice() : [];
+    history.push({choice, updatedAt: now, submittedAt: now});
+    state.predictions[m.id][player] = {choice, updatedAt: now, submittedAt: now, submitCount: cnt + 1, history};
+    delete draftPredictions[m.id];
+    saved++;
+  });
+  if(!saved && skipped.length){ toast('Chưa ghi được: ' + skipped.join('; '), 5000); return; }
+  audit('submit_predictions', `${player} gửi ${saved} dự đoán${skipped.length ? ' · bỏ qua: '+skipped.join('; ') : ''}`);
+  saveLocal(); render();
+  const dayMsg = $('dateFilter').value === 'all' ? 'các ngày đang chọn' : 'ngày ' + displayDay($('dateFilter').value);
+  const baseMsg = `Bạn đã gửi dự đoán ${dayMsg} thành công. Đã ghi ${saved} dự đoán cho ${player}${skipped.length ? '; bỏ qua: '+skipped.join('; ') : ''}.`;
+  toast(baseMsg + (cloudUrl() ? ' Đang đẩy Cloud...' : ''), 5000);
+  if(cloudUrl()) await saveCloud({successMessage:`Bạn đã gửi dự đoán ${dayMsg} thành công và đã lưu Cloud.`});
+}
+function clearDrafts(){
+  const ids = new Set(filteredMatches().map(m=>m.id));
+  Object.keys(draftPredictions).forEach(mid=>{ if(ids.has(mid)) delete draftPredictions[mid]; });
+  render(); toast('Đã bỏ chọn nháp trong ngày đang xem.');
+}
+function saveResult(mid){
+  if(!isAdmin){ toast('Cần mở QTV để nhập kết quả.'); return; }
+  const hEl=document.querySelector(`input[data-score="home"][data-mid="${mid}"]`);
+  const aEl=document.querySelector(`input[data-score="away"][data-mid="${mid}"]`);
+  const h=hEl.value, a=aEl.value; const result=resultOfScore(h,a);
+  if(!result){ toast('Nhập đủ tỷ số hợp lệ.'); return; }
+  state.results[mid] = {homeScore:Number(h), awayScore:Number(a), result, status:'done', updatedAt:new Date().toISOString()};
+  audit('result', `${mid} ${h}-${a}`);
+  saveLocal(); render(); toast('Đã lưu kết quả ' + mid);
+}
+function clearResult(mid){
+  if(!isAdmin){ toast('Cần mở QTV để xóa kết quả.'); return; }
+  if(!state.results[mid]){ toast('Trận này chưa có kết quả để xóa.'); return; }
+  if(!confirm('Xóa kết quả trận ' + mid + '?')) return;
+  delete state.results[mid];
+  audit('clear_result', mid);
+  saveLocal(); render(); toast('Đã xóa kết quả ' + mid);
+}
+function loadOnlineResults(){
+  const url=cloudUrl(); if(!url){ toast('Chưa có Apps Script URL. Vào QTV để dán link /exec trước.'); return; }
+  const cb='wcResultsCb_' + Date.now();
+  window[cb] = (data) => {
+    try{
+      if(!data || data.ok===false) throw new Error(data?.error || 'Apps Script không trả dữ liệu hợp lệ');
+      const remoteState = data.state || {};
+      const remoteResults = remoteState.results || {};
+      mergeState(remoteState);
+      state.results = remoteResults;
+      saveLocal();
+      const imported = Number(data.imported || 0);
+      log('Import KQ_TranDau: ' + JSON.stringify(data.report || [], null, 2));
+      toast(`Đã lấy ${imported} kết quả từ sheet KQ_TranDau.`);
+      render();
+    }catch(e){ toast('Lỗi lấy kết quả: ' + (e.message || e), 6000); }
+    finally{ delete window[cb]; script.remove(); }
+  };
+  const script=document.createElement('script');
+  script.onerror=()=>{ delete window[cb]; script.remove(); toast('Không gọi được Apps Script action=syncresults.', 6000); };
+  script.src = url + (url.includes('?')?'&':'?') + 'action=syncresults&callback=' + encodeURIComponent(cb) + '&t=' + Date.now();
+  document.body.appendChild(script);
+}
+
+async function clearResultsByDate(){
+  if(!isAdmin){ toast('Cần mở QTV để xóa kết quả.'); return; }
+  const day = $('adminResultClearDate')?.value || currentMatchDayKey();
+  const matches = MATCHES.filter(m=>matchDayKey(m)===day);
+  const existing = matches.filter(m=>state.results[m.id]);
+  if(!existing.length && !cloudUrl()){ toast(`Ngày ${displayDay(day)} chưa có kết quả trên máy này để xóa.`); return; }
+  if(!confirm(`Xóa kết quả các trận ngày ${displayDay(day)}? Nếu đã cấu hình Cloud, hệ thống sẽ xóa trực tiếp trong sheet KQ_TranDau.`)) return;
+  const url = cloudUrl();
+  if(url){
+    const cb='wcClearResultsCb_' + Date.now();
+    window[cb] = (data) => {
+      try{
+        if(!data || data.ok===false) throw new Error(data?.error || 'Apps Script không trả dữ liệu hợp lệ');
+        const remoteState = data.state || {};
+        const remoteResults = remoteState.results || {};
+        mergeState(remoteState);
+        state.results = remoteResults;
+        saveLocal();
+        const cleared = Number(data.cleared || 0);
+        log('Clear KQ_TranDau: ' + JSON.stringify(data.report || [], null, 2));
+        toast(`Đã xóa kết quả ngày ${displayDay(day)} trong sheet KQ_TranDau${cleared ? ` (${cleared} trận có dữ liệu)` : ''}.`, 5000);
+        render();
+      }catch(e){ toast('Lỗi xóa kết quả: ' + (e.message || e), 6000); }
+      finally{ delete window[cb]; script.remove(); }
+    };
+    const script=document.createElement('script');
+    script.onerror=()=>{ delete window[cb]; script.remove(); toast('Không gọi được Apps Script action=clearresultsday.', 6000); };
+    script.src = url + (url.includes('?')?'&':'?') + 'action=clearresultsday&day=' + encodeURIComponent(day) + '&callback=' + encodeURIComponent(cb) + '&t=' + Date.now();
+    document.body.appendChild(script);
+    return;
+  }
+  existing.forEach(m=>delete state.results[m.id]);
+  audit('clear_results_by_day', `${displayDay(day)} · ${existing.map(m=>m.id).join(', ')}`);
+  saveLocal(); render();
+  toast(`Đã xóa ${existing.length} kết quả ngày ${displayDay(day)} trên máy này. Chưa có Cloud URL nên chưa xóa được sheet KQ_TranDau.`, 5000);
+}
+
+function cleanupTestResults20260701(){
+  state.settings = state.settings || {};
+  const flag = arguments[0] === 'cloud' ? 'cleanedTestResults20260701Cloud' : 'cleanedTestResults20260701Local';
+  if(state.settings[flag]) return;
+  const matches = MATCHES.filter(m=>matchDayKey(m)==='2026-07-01');
+  const existing = matches.filter(m=>state.results[m.id]);
+  state.settings[flag] = true;
+  if(existing.length){
+    existing.forEach(m=>delete state.results[m.id]);
+    audit('cleanup_test_results', `01/07 · ${existing.map(m=>m.id).join(', ')}`);
+    saveLocal();
+  }
+}
+
+async function deletePlayerPredictions(){
+  if(!isAdmin){ toast('Cần mở QTV để xóa dự đoán.'); return; }
+  const player=$('adminDeletePlayer')?.value;
+  const day=$('adminDeleteDate')?.value || currentMatchDayKey();
+  if(!player){ toast('Chưa chọn người chơi cần xóa.'); return; }
+  const matches = MATCHES.filter(m=>matchDayKey(m)===day);
+  const existing = matches.filter(m=>state.predictions[m.id]?.[player]);
+  if(!existing.length){ toast('Không có dự đoán đã gửi trong phạm vi này để xóa.'); return; }
+  if(!confirm(`Xóa ${existing.length} dự đoán của ${player} trong ngày ${displayDay(day)}?`)) return;
+  existing.forEach(m=>{
+    delete state.predictions[m.id][player];
+    if(!Object.keys(state.predictions[m.id]).length) delete state.predictions[m.id];
+  });
+  Object.keys(draftPredictions).forEach(mid=>{ if(existing.some(m=>m.id===mid)) delete draftPredictions[mid]; });
+  audit('delete_predictions', `${player} · ${existing.map(m=>m.id).join(', ')}`);
+  saveLocal(); render(); toast(`Đã xóa ${existing.length} dự đoán của ${player}. Người chơi có thể gửi lại.${cloudUrl() ? ' Đang lưu Cloud...' : ''}`, 5000);
+  if(cloudUrl()) await saveCloud({successMessage:`Đã xóa ${existing.length} dự đoán của ${player} và đã lưu Cloud.`});
+}
+
+function getCloudPayload(){
+  return {ok:true, type:'wc2026-predict-state', savedAt:new Date().toISOString(), state: normalizeState(state), sheetSummary:{results:buildResultsSheetRows(), thongKeDuDoan:buildThongKeDuDoanRows(), thongKeDuDoanExportRows:buildThongKeDuDoanExportRows()}};
+}
+async function saveCloud(options={}){
+  const url=cloudUrl(); if(!url){ toast('Chưa có Apps Script URL. Vào QTV để dán link.'); return; }
+  saveLocal();
+  const payload=JSON.stringify(getCloudPayload());
+  try{
+    const res = await fetch(actionUrl(url, 'save'), {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:payload, redirect:'follow'});
+    const txt = await res.text();
+    let json=null; try{ json=JSON.parse(txt); }catch(e){}
+    if(!res.ok || (json && json.ok===false)) throw new Error(json?.error || res.statusText || 'Cloud không phản hồi OK');
+    toast(options.successMessage || 'Đã lưu Cloud thành công.'); audit('cloud_save','fetch ok'); saveLocal();
+  }catch(err){
+    console.warn(err);
+    try{
+      postByHiddenForm(url, payload, 'save');
+      toast('Đã gửi Cloud qua form dự phòng. Bấm Lấy Cloud để kiểm tra.', 4200);
+      audit('cloud_save_fallback', String(err.message || err)); saveLocal();
+    }catch(e){ toast('Chưa lưu được Cloud: ' + (e.message || e), 5000); }
+  }
+}
+function postByHiddenForm(url, payload, action=''){
+  const form=document.createElement('form'); form.method='POST'; form.action=actionUrl(url, action); form.target='cloudSaveFrame'; form.style.display='none';
+  const input=document.createElement('input'); input.type='hidden'; input.name='payload'; input.value=payload; form.appendChild(input);
+  if(action){ const actionInput=document.createElement('input'); actionInput.type='hidden'; actionInput.name='action'; actionInput.value=action; form.appendChild(actionInput); }
+  document.body.appendChild(form); form.submit(); setTimeout(()=>form.remove(), 2000);
+}
+function loadCloud(){
+  const url=cloudUrl(); if(!url){ toast('Chưa có Apps Script URL. Vào QTV để dán link.'); return; }
+  const cb='wcCloudCb_' + Date.now();
+  window[cb] = (data) => {
+    try{
+      const remote = data?.state || data;
+      mergeState(remote);
+      cleanupTestResults20260701('cloud');
+      toast('Đã lấy và gộp dữ liệu Cloud.'); audit('cloud_load','jsonp ok'); saveLocal(); render();
+    }catch(e){ toast('Lỗi đọc Cloud: ' + (e.message || e), 5000); }
+    finally{ delete window[cb]; script.remove(); }
+  };
+  const script=document.createElement('script');
+  script.onerror=()=>{ delete window[cb]; script.remove(); toast('Không tải được Cloud. Kiểm tra URL Apps Script và quyền Anyone.', 5000); };
+  script.src = url + (url.includes('?')?'&':'?') + 'action=load&callback=' + encodeURIComponent(cb) + '&t=' + Date.now();
+  document.body.appendChild(script);
+}
+function pingCloud(){
+  const url=cloudUrl(); if(!url){ toast('Chưa có Apps Script URL.'); return; }
+  const cb='wcPingCb_' + Date.now();
+  window[cb]=(data)=>{ toast(data?.ok ? 'Cloud OK: ' + (data.updatedAt || '') : 'Cloud phản hồi lỗi'); delete window[cb]; script.remove(); };
+  const script=document.createElement('script'); script.onerror=()=>{ delete window[cb]; script.remove(); toast('Ping Cloud thất bại.'); };
+  script.src=url+(url.includes('?')?'&':'?')+'action=ping&callback='+encodeURIComponent(cb)+'&t='+Date.now(); document.body.appendChild(script);
+}
+
+function importDailySheets(){
+  const url=cloudUrl(); if(!url){ toast('Chưa có Apps Script URL. Deploy Apps Script rồi dán link /exec trước.'); return; }
+  const cb='wcImportDaysCb_' + Date.now();
+  window[cb] = (data) => {
+    try{
+      if(!data || data.ok===false) throw new Error(data?.error || 'Apps Script không trả dữ liệu hợp lệ');
+      mergeState(data.state || {});
+      const total = (data.report || []).reduce((s,r)=>s + Number(r.imported || 0), 0);
+      log('Import sheet ngày: ' + JSON.stringify(data.report || [], null, 2));
+      toast('Đã kéo dự đoán từ các sheet ngày: ' + total + ' lượt chọn.');
+      render();
+    }catch(e){ toast('Lỗi kéo sheet ngày: ' + (e.message || e), 6000); }
+    finally{ delete window[cb]; script.remove(); }
+  };
+  const script=document.createElement('script');
+  script.onerror=()=>{ delete window[cb]; script.remove(); toast('Không gọi được Apps Script action=syncdays.', 6000); };
+  script.src = url + (url.includes('?')?'&':'?') + 'action=syncdays&callback=' + encodeURIComponent(cb) + '&t=' + Date.now();
+  document.body.appendChild(script);
+}
+async function exportDailySheets(){
+  if(!isAdmin){ toast('Cần mở QTV để đẩy dữ liệu ra sheet ngày.'); return; }
+  const url=cloudUrl(); if(!url){ toast('Chưa có Apps Script URL. Deploy Apps Script rồi dán link /exec trước.'); return; }
+  const draftCount = Object.keys(draftPredictions || {}).length;
+  if(draftCount){ toast(`Còn ${draftCount} lựa chọn nháp chưa gửi. Bấm Gửi dự đoán trước rồi mới đẩy Google Sheet.`, 6000); return; }
+  const total = totalPredictionRecords();
+  if(!total){ toast('Chưa có dự đoán đã gửi nào để đẩy ra Google Sheet.', 5000); return; }
+  saveLocal();
+  const payload=JSON.stringify({action:'exportdays', state: normalizeState(state)});
+  try{
+    const res = await fetch(actionUrl(url, 'exportdays'), {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:payload, redirect:'follow'});
+    const txt = await res.text();
+    let json=null; try{ json=JSON.parse(txt); }catch(e){}
+    if(!res.ok || (json && json.ok===false)) throw new Error(json?.error || res.statusText || 'Cloud không phản hồi OK');
+    log('Export sheet ngày: ' + JSON.stringify(json?.report || [], null, 2));
+    toast(`Đã đẩy ${total} dự đoán ra các sheet ngày trong Google Sheet.`);
+  }catch(err){
+    console.warn(err);
+    try{
+      postByHiddenForm(url, payload, 'exportdays');
+      audit('exportdays_fallback', String(err.message || err)); saveLocal();
+      toast('Đã gửi lệnh đẩy sheet ngày qua form dự phòng. Mở Google Sheet kiểm tra sau vài giây.', 6000);
+    }catch(e){ toast('Chưa đẩy được sheet ngày: ' + (e.message || e), 6000); }
+  }
+}
+function exportJson(){
+  const blob=new Blob([JSON.stringify(getCloudPayload(), null, 2)], {type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='wc2026_du_doan_state_' + new Date().toISOString().slice(0,10) + '.json'; a.click(); URL.revokeObjectURL(a.href);
+}
+function toCsvText(headers, rows){ return [headers, ...rows].map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n'); }
+function downloadCsv(filename, headers, rows){ const blob=new Blob(['\ufeff'+toCsvText(headers, rows)], {type:'text/csv;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; a.click(); URL.revokeObjectURL(a.href); }
+function fineCsv(){
+  const header=['STT','Ho ten','Dung','Sai','Thieu','Ty le dung','Tien phat'];
+  const rows=fineRows().map((r,i)=>[i+1,r.name,r.correct,r.wrong,r.missing,resultRate(r),r.total]);
+  return toCsvText(header, rows);
+}
+function exportFineCsv(){
+  downloadCsv('wc2026_tong_hop_phat.csv', ['STT','Ho ten','Dung','Sai','Thieu','Ty le dung','Tien phat'], fineRows().map((r,i)=>[i+1,r.name,r.correct,r.wrong,r.missing,resultRate(r),r.total]));
+}
+function exportResultSheetCsv(){
+  const rows=buildResultsSheetRows().map(r=>[r.matchId,r.date,r.home+' vs '+r.away,r.homeScore+'-'+r.awayScore,r.result,r.correct,r.wrong,r.missing,r.totalPenalty]);
+  downloadCsv('wc2026_sheet_ket_qua.csv', ['Ma tran','Ngay','Tran','Ty so','Ket qua','Dung','Sai','Thieu','Tong dong gop'], rows);
+}
+function exportThongKeSheetCsv(){
+  const data=buildThongKeDuDoanExport(activeStatsMode === 'next5' ? 'next5' : 'current5');
+  downloadCsv('wc2026_sheet_thongkedudoan.csv', data.headers, data.rows);
+}
+async function copyFine(){
+  const rows=fineRows();
+  const text=rows.map((r,i)=>`${i+1}. ${r.name}: ${money(r.total)} · Đúng ${r.correct}, Sai ${r.wrong}, Thiếu ${r.missing}, Tỷ lệ đúng ${resultRate(r)}`).join('\n');
+  await navigator.clipboard.writeText(text || 'Chưa có dữ liệu phạt'); toast('Đã copy bảng phạt.');
+}
+
+function bind(){
+  document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{ document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('.section').forEach(s=>s.classList.remove('active')); $(btn.dataset.tab).classList.add('active'); render(); }));
+  $('playerSelect').addEventListener('change', ()=>{ draftPredictions={}; render(); });
+  $('dateFilter').addEventListener('change', render);
+  if($('adminDeletePlayer')) $('adminDeletePlayer').addEventListener('change', renderAdminDeleteTools);
+  if($('adminDeleteDate')) $('adminDeleteDate').addEventListener('change', renderAdminDeleteTools);
+  if($('adminResultClearDate')) $('adminResultClearDate').addEventListener('change', renderResultClearDate);
+  if($('statsPlayerSearch')) $('statsPlayerSearch').addEventListener('input', renderStats);
+  document.querySelectorAll('.stats-mode-btn').forEach(btn=>btn.addEventListener('click',()=>{ activeStatsMode=btn.dataset.statsMode || 'current5'; renderStats(); }));
+  document.querySelectorAll('.admin-panel-btn').forEach(btn=>btn.addEventListener('click',()=>{ activeAdminPanel=btn.dataset.adminPanel || 'resultPanel'; renderAdminFields(); }));
+  if($('statsPlayerPicker')) $('statsPlayerPicker').addEventListener('click', e=>{ const btn=e.target.closest('[data-player-name]'); if(btn){ $('statsPlayerSearch').value = btn.dataset.playerName; renderStats(); }});
+  document.body.addEventListener('click', e=>{
+    const pick=e.target.closest('.pick'); if(pick) setPrediction(pick.dataset.mid, pick.dataset.pick);
+    const detail=e.target.closest('[data-player-detail]'); if(detail){ selectedResultPlayer = selectedResultPlayer===detail.dataset.playerDetail ? '' : detail.dataset.playerDetail; renderFines(); return; }
+  });
+  $('btnLoadCloud').onclick=loadCloud; $('btnLoadCloud2').onclick=loadCloud;
+  $('btnSaveCloud').onclick=saveCloud; $('btnSaveCloud2').onclick=saveCloud;
+  $('btnPrint').onclick=()=>window.print();
+  if($('btnSubmitPredictions')) $('btnSubmitPredictions').onclick=submitPredictions;
+  if($('btnClearDraft')) $('btnClearDraft').onclick=clearDrafts;
+  if($('btnDeletePrediction')) $('btnDeletePrediction').onclick=deletePlayerPredictions;
+  if($('btnResetStatsFilter')) $('btnResetStatsFilter').onclick=()=>{ $('statsPlayerSearch').value=''; activeStatsMode='current5'; renderStats(); };
+  if($('adminPass')) $('adminPass').addEventListener('keydown', e=>{ if(e.key==='Enter'){ if($('adminPass').value===ADMIN_PASSWORD){ isAdmin=true; toast('Đã mở QTV.'); render(); } else toast('Sai mật khẩu QTV.'); }});
+  $('btnAdminLogout').onclick=()=>{ isAdmin=false; $('adminPass').value=''; toast('Đã khóa QTV.'); render(); };
+  $('btnSaveConfig').onclick=()=>{ localStorage.setItem('wc2026_cloud_url', $('cloudUrl').value.trim()); toast('Đã lưu cấu hình Cloud trên máy này.'); render(); };
+  $('btnSaveSettings').onclick=()=>{ state.settings.missingPenalty = $('missingPenalty').value==='yes'; audit('settings','missingPenalty='+state.settings.missingPenalty); saveLocal(); render(); toast('Đã lưu luật phạt.'); };
+  $('btnPingCloud').onclick=pingCloud;
+  if($('btnImportDailySheets')) $('btnImportDailySheets').onclick=importDailySheets;
+  if($('btnExportDailySheets')) $('btnExportDailySheets').onclick=exportDailySheets;
+  if($('btnExportJson')) $('btnExportJson').onclick=exportJson;
+  if($('btnExportFineCsv')) $('btnExportFineCsv').onclick=exportFineCsv;
+  if($('btnExportResultSheetCsv')) $('btnExportResultSheetCsv').onclick=exportResultSheetCsv;
+  if($('btnExportThongKeSheetCsv')) $('btnExportThongKeSheetCsv').onclick=exportThongKeSheetCsv;
+  if($('btnLoadOnlineResults')) $('btnLoadOnlineResults').onclick=loadOnlineResults;
+  if($('btnClearResultDate')) $('btnClearResultDate').onclick=clearResultsByDate;
+  if($('btnCopyFine')) $('btnCopyFine').onclick=copyFine;
+  if($('btnResetLocal')) $('btnResetLocal').onclick=()=>{ if(confirm('Xóa dữ liệu local trên máy này? Không xóa Google Sheet Cloud.')){ localStorage.removeItem(STORAGE_KEY); state=defaultState(); render(); toast('Đã xóa dữ liệu máy này.'); } };
+  if($('importJson')) $('importJson').addEventListener('change', async e=>{ const file=e.target.files?.[0]; if(!file) return; const txt=await file.text(); const data=JSON.parse(txt); mergeState(data.state || data); toast('Đã import JSON.'); render(); e.target.value=''; });
+  setInterval(render, 30000);
+  setInterval(()=>$('clockPill').textContent = 'Giờ VN: ' + nowVN(), 1000);
+}
+
+loadLocal(); cleanupTestResults20260701(); bind(); render();
+// Tự lấy Cloud khi đã hard-code hoặc máy đã lưu URL.
+if(cloudUrl()) setTimeout(loadCloud, 800);
+</script>
+</body>
+</html>
