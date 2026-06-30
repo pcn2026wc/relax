@@ -235,7 +235,7 @@
           <button class="btn" id="btnAdminLogout">Khóa QTV</button>
         </div>
         <div class="okbox admin-only">Đã mở QTV. Có thể nhập kết quả, đổi cấu hình cloud, export/import và reset dữ liệu.</div>
-        <div class="notice admin-only">Muốn tất cả người chơi tự lấy/lưu Cloud, hãy dán link Apps Script Web App vào ô dưới rồi bấm Lưu cấu hình. Apps Script bản này đã trỏ sẵn vào Google Sheet ID <span class="code">1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ</span>. Khi deploy chính thức nên dán link Web App vào hằng số <span class="code">CLOUD_URL_DEFAULT</span> trong file HTML.</div>
+        <div class="notice admin-only">Cloud đã được cấu hình sẵn bằng Apps Script Web App. Apps Script bản này trỏ vào Google Sheet ID <span class="code">1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ</span>. Khi người chơi bấm <b>Gửi dự đoán</b>, hệ thống sẽ tự lưu Cloud và đẩy dữ liệu sang sheet ngày.</div>
         <div class="toolbar admin-only">
           <div class="field"><label>Apps Script Web App URL</label><input id="cloudUrl" placeholder="https://script.google.com/macros/s/.../exec" /></div>
           <button class="btn primary" id="btnSaveConfig">Lưu cấu hình</button>
@@ -301,7 +301,7 @@
 const STORAGE_KEY = 'wc2026_predict_state_v1_20260701';
 const GOOGLE_SHEET_ID = '1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ';
 const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ/edit?usp=sharing';
-const CLOUD_URL_DEFAULT = ''; // Dán link Apps Script Web App /exec vào đây nếu muốn hard-code cho mọi người dùng.
+const CLOUD_URL_DEFAULT = 'https://script.google.com/macros/s/AKfycbw_XvG7UfTXczCQnjZH-WlESkD38yU-P2KStmV6dvJ8FxNhr8ZW_cLNsGJjYcaJ-WNt/exec';
 const ADMIN_PASSWORD = ['V','n','p','T','@','@'].join('');
 const FINE_AMOUNT = 20000;
 const MAX_SUBMISSIONS = 3;
@@ -324,7 +324,12 @@ const PLAYERS = [
   {name:'Vũ Thanh Tùng'},
   {name:'Dương Thúy Lan'},
   {name:'Lê Đức Hải'},
-  {name:'Nguyễn Phương Thảo'}
+  {name:'Nguyễn Phương Thảo'},
+  {name:'Nguyễn Thị Thanh Loan'},
+  {name:'Hoàng Trung Bình'},
+  {name:'Trần Đức Kháng'},
+  {name:'Nguyễn Thuý Hà'},
+  {name:'Lê Thị Thu Hằng'}
 ];
 
 // kickoff là giờ Việt Nam, định dạng YYYY-MM-DDTHH:mm:00+07:00.
@@ -844,8 +849,11 @@ async function submitPredictions(){
   saveLocal(); render();
   const dayMsg = $('dateFilter').value === 'all' ? 'các ngày đang chọn' : 'ngày ' + displayDay($('dateFilter').value);
   const baseMsg = `Bạn đã gửi dự đoán ${dayMsg} thành công. Đã ghi ${saved} dự đoán cho ${player}${skipped.length ? '; bỏ qua: '+skipped.join('; ') : ''}.`;
-  toast(baseMsg + (cloudUrl() ? ' Đang đẩy Cloud...' : ''), 5000);
-  if(cloudUrl()) await saveCloud({successMessage:`Bạn đã gửi dự đoán ${dayMsg} thành công và đã lưu Cloud.`});
+  toast(baseMsg + (cloudUrl() ? ' Đang lưu Cloud và đẩy Google Sheet...' : ''), 5000);
+  if(cloudUrl()){
+    await saveCloud({successMessage:`Bạn đã gửi dự đoán ${dayMsg} thành công và đã lưu Cloud.`});
+    await autoExportDailySheetsAfterSubmit(dayMsg);
+  }
 }
 function clearDrafts(){
   const ids = new Set(filteredMatches().map(m=>m.id));
@@ -984,6 +992,28 @@ async function saveCloud(options={}){
       toast('Đã gửi Cloud qua form dự phòng. Bấm Lấy Cloud để kiểm tra.', 4200);
       audit('cloud_save_fallback', String(err.message || err)); saveLocal();
     }catch(e){ toast('Chưa lưu được Cloud: ' + (e.message || e), 5000); }
+  }
+}
+async function autoExportDailySheetsAfterSubmit(dayMsg='ngày đang chọn'){
+  const url=cloudUrl(); if(!url) return;
+  const total = totalPredictionRecords();
+  if(!total) return;
+  saveLocal();
+  const payload=JSON.stringify({action:'exportdays', state: normalizeState(state)});
+  try{
+    const res = await fetch(actionUrl(url, 'exportdays'), {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:payload, redirect:'follow'});
+    const txt = await res.text();
+    let json=null; try{ json=JSON.parse(txt); }catch(e){}
+    if(!res.ok || (json && json.ok===false)) throw new Error(json?.error || res.statusText || 'Google Sheet không phản hồi OK');
+    log('Auto export sheet ngày: ' + JSON.stringify(json?.report || [], null, 2));
+    toast(`Bạn đã gửi dự đoán ${dayMsg} thành công. Dữ liệu đã được ghi vào Google Sheet.`, 5200);
+  }catch(err){
+    console.warn(err);
+    try{
+      postByHiddenForm(url, payload, 'exportdays');
+      audit('auto_exportdays_fallback', String(err.message || err)); saveLocal();
+      toast(`Bạn đã gửi dự đoán ${dayMsg} thành công. Đã gửi lệnh ghi Google Sheet, kiểm tra lại sau vài giây.`, 6200);
+    }catch(e){ toast('Đã lưu dự đoán nhưng chưa đẩy được Google Sheet: ' + (e.message || e), 6500); }
   }
 }
 function postByHiddenForm(url, payload, action=''){
