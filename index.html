@@ -169,6 +169,15 @@
     .qtv-compact .result-clear-field{flex:0 1 150px;min-width:140px}
     #logBox{min-height:92px}
     #resultPanel h2,#deletePanel h2{margin-top:0}
+    .choice-break-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0 12px}
+    .choice-break-card{border:1px solid rgba(185,211,244,.14);border-radius:14px;background:rgba(8,17,31,.38);padding:10px}
+    .choice-break-title{font-size:13px;font-weight:900;margin-bottom:7px;color:#f8fbff}
+    .choice-line{display:grid;grid-template-columns:minmax(118px,.55fr) 1fr;gap:8px;align-items:start;border-top:1px solid rgba(185,211,244,.08);padding:7px 0;font-size:12px}
+    .choice-line:first-of-type{border-top:0}
+    .choice-line b{color:#cfe2f8}
+    .choice-line span{color:#eef6ff;line-height:1.45}
+    .choice-line.home b{color:#bbf7d0}.choice-line.draw b{color:#fde68a}.choice-line.away b{color:#dbeafe}.choice-line.bad b,.choice-line.missing b{color:#fecdd3}
+    @media(max-width:760px){.choice-break-grid{grid-template-columns:1fr}.choice-line{grid-template-columns:1fr}}
     @media(max-width:520px){
       .tabs{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important}
     }
@@ -309,27 +318,27 @@ const PREDICTION_CUTOFF_MINUTES = 5;
 const TZ_LABEL = 'Asia/Bangkok / Việt Nam';
 
 const PLAYERS = [
-  {name:'Vũ Xuân Nhân'},
   {name:'Lê Hùng Anh'},
-  {name:'Bùi Đức Hà'},
-  {name:'Hoàng Thị Hải Hằng'},
-  {name:'Vũ Lê Xuân Hà'},
-  {name:'Vũ Quốc Toản'},
+  {name:'Hoàng Trung Bình'},
+  {name:'Nguyễn Thị Thanh Chương'},
   {name:'Nguyễn Trọng Cường'},
+  {name:'Bùi Đức Hà'},
+  {name:'Vũ Lê Xuân Hà'},
+  {name:'Nguyễn Thuý Hà'},
+  {name:'Lê Đức Hải'},
+  {name:'Hoàng Thị Hải Hằng'},
+  {name:'Lê Thị Thu Hằng'},
+  {name:'Trần Đức Kháng'},
+  {name:'Dương Thúy Lan'},
+  {name:'Nguyễn Thị Thanh Loan'},
+  {name:'Vũ Xuân Nhân'},
   {name:'Nguyễn Kỳ Thanh'},
   {name:'Nguyễn Tiến Thắng'},
   {name:'Nguyễn Bá Thái'},
-  {name:'Nguyễn Thị Thanh Thủy'},
-  {name:'Nguyễn Thị Thanh Chương'},
-  {name:'Vũ Thanh Tùng'},
-  {name:'Dương Thúy Lan'},
-  {name:'Lê Đức Hải'},
   {name:'Nguyễn Phương Thảo'},
-  {name:'Nguyễn Thị Thanh Loan'},
-  {name:'Hoàng Trung Bình'},
-  {name:'Trần Đức Kháng'},
-  {name:'Nguyễn Thuý Hà'},
-  {name:'Lê Thị Thu Hằng'}
+  {name:'Nguyễn Thị Thanh Thủy'},
+  {name:'Vũ Quốc Toản'},
+  {name:'Vũ Thanh Tùng'}
 ];
 
 // kickoff là giờ Việt Nam, định dạng YYYY-MM-DDTHH:mm:00+07:00.
@@ -679,6 +688,7 @@ function renderStats(){
   }
   const daySections = dates.map(d=>{
     const ms = MATCHES.filter(m=>matchDayKey(m)===d);
+    const choiceBreakdown = renderStatsChoiceBreakdown(ms, playerList);
     const matchPenaltyTotals = ms.map(m=>{
       let total=0;
       playerList.forEach(p=>{
@@ -696,23 +706,46 @@ function renderStats(){
         const rec = state.predictions[m.id]?.[p.name];
         const pred = isPredictionValidForScoring(m, rec) ? rec.choice : '';
         const res = state.results[m.id];
-        let content = rec?.choice && !pred ? '<span class="status-pill bad">Bỏ phiếu muộn</span>' : '<span class="status-pill warn">Chưa dự đoán</span>';
+        let content = rec?.choice && !pred ? '<b>' + escapeHtml(choiceLabel(rec.choice,m)) + '</b><br><span class="status-pill bad">Bỏ phiếu muộn</span>' : '<span class="status-pill warn">Chưa dự đoán</span>';
         let penalty = 0;
         if(pred){
-          if(!res || res.status !== 'done') content = '<span class="status-pill warn">Đã dự đoán</span>';
-          else if(pred === res.result) content = '<span class="status-pill ok">Đúng</span>';
-          else { content = '<span class="status-pill bad">Sai · ' + money(FINE_AMOUNT) + '</span>'; penalty = FINE_AMOUNT; }
+          const pickText = '<b>' + escapeHtml(choiceLabel(pred,m)) + '</b>';
+          if(!res || res.status !== 'done') content = pickText + '<br><span class="status-pill warn">Đã dự đoán</span>';
+          else if(pred === res.result) content = pickText + '<br><span class="status-pill ok">Đúng</span>';
+          else { content = pickText + '<br><span class="status-pill bad">Sai · ' + money(FINE_AMOUNT) + '</span>'; penalty = FINE_AMOUNT; }
         }
         return {content, penalty};
       });
       const rowPenalty = cells.reduce((sum,c)=>sum + c.penalty,0);
       return `<tr><td><b>${escapeHtml(p.name)}</b></td>${cells.map(c=>`<td>${c.content}</td>`).join('')}<td class="fine-bad"><b>${money(rowPenalty)}</b></td></tr>`;
     }).join('');
-    return `<div class="stats-day-card"><h3>Ngày ${displayDay(d)}</h3><div style="overflow:auto"><table><thead><tr><th>Người chơi</th>${ms.map(m=>`<th><b>${escapeHtml(m.id)}</b><br><span class="small">${escapeHtml(m.home)} vs ${escapeHtml(m.away)}</span></th>`).join('')}<th>Tổng phạt</th></tr></thead><tbody><tr class="day-summary-row"><td><b>Tổng theo trận</b></td>${matchPenaltyTotals.map(v=>`<td>${money(v)}</td>`).join('')}<td><b>${money(totalDayPenalty)}</b></td></tr>${rows}</tbody></table></div></div>`;
+    return `<div class="stats-day-card"><h3>Ngày ${displayDay(d)}</h3>${choiceBreakdown}<div style="overflow:auto"><table><thead><tr><th>Người chơi</th>${ms.map(m=>`<th><b>${escapeHtml(m.id)}</b><br><span class="small">${escapeHtml(m.home)} vs ${escapeHtml(m.away)}</span></th>`).join('')}<th>Tổng phạt</th></tr></thead><tbody><tr class="day-summary-row"><td><b>Tổng theo trận</b></td>${matchPenaltyTotals.map(v=>`<td>${money(v)}</td>`).join('')}<td><b>${money(totalDayPenalty)}</b></td></tr>${rows}</tbody></table></div></div>`;
   }).join('');
   $('statsTables').innerHTML = summary + '<div class="small">Mỗi ô cho biết trạng thái dự đoán; nếu sai sẽ hiện thêm số tiền phạt.</div>' + daySections;
   renderStatsPlayerPicker();
   renderSheetSummary();
+}
+function renderStatsChoiceBreakdown(matches, playerList){
+  if(!matches.length) return '';
+  const blocks = matches.map(m=>{
+    const groups = {H:[], D:[], A:[], late:[], missing:[]};
+    playerList.forEach(p=>{
+      const rec = state.predictions[m.id]?.[p.name];
+      if(!rec?.choice){ groups.missing.push(p.name); return; }
+      if(!isPredictionValidForScoring(m, rec)){ groups.late.push(p.name); return; }
+      groups[rec.choice]?.push(p.name);
+    });
+    const line = (label, names, cls='') => `<div class="choice-line ${cls}"><b>${escapeHtml(label)} (${names.length})</b><span>${names.length ? names.map(n=>escapeHtml(shortPlayerName(n))).join(', ') : 'Không có'}</span></div>`;
+    return `<div class="choice-break-card">
+      <div class="choice-break-title">${escapeHtml(m.id)} · ${escapeHtml(m.home)} vs ${escapeHtml(m.away)}</div>
+      ${line(m.home + ' thắng', groups.H, 'home')}
+      ${line('Hòa', groups.D, 'draw')}
+      ${line(m.away + ' thắng', groups.A, 'away')}
+      ${groups.late.length ? line('Bỏ phiếu muộn', groups.late, 'bad') : ''}
+      ${groups.missing.length ? line('Chưa dự đoán', groups.missing, 'missing') : ''}
+    </div>`;
+  }).join('');
+  return `<div class="choice-break-grid">${blocks}</div>`;
 }
 function normText(s){ return String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d'); }
 function shortPlayerName(name){
