@@ -1098,6 +1098,13 @@ async function autoExportDailySheetsAfterSubmit(dayMsg='ngày đang chọn'){
   saveLocal();
   const payload=JSON.stringify({action:'exportdays', spreadsheetId:googleSheetId(), state: normalizeState(state)});
   try{
+    const cloudInfo = await readCloudInfo(url);
+    const remoteSheetId = cloudInfo?.spreadsheetId || cloudInfo?.meta?.spreadsheetId || '';
+    if(remoteSheetId && remoteSheetId !== googleSheetId()){
+      const mismatch = new Error(`Apps Script đang trỏ Sheet ${remoteSheetId}, khác Sheet trong QTV ${googleSheetId()}.`);
+      mismatch.code = 'SHEET_MISMATCH';
+      throw mismatch;
+    }
     const res = await fetch(actionUrl(url, 'exportdays'), {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:payload, redirect:'follow'});
     const txt = await res.text();
     let json=null; try{ json=JSON.parse(txt); }catch(e){}
@@ -1106,6 +1113,11 @@ async function autoExportDailySheetsAfterSubmit(dayMsg='ngày đang chọn'){
     toast(`Bạn đã gửi dự đoán ${dayMsg} thành công. Dữ liệu đã được ghi vào Google Sheet.`, 5200);
   }catch(err){
     console.warn(err);
+    if(err?.code === 'SHEET_MISMATCH'){
+      audit('sheet_target_mismatch', String(err.message || err)); saveLocal();
+      toast(`Đã lưu dự đoán vào Cloud nhưng chưa ghi Google Sheet: ${err.message} Vào QTV cập nhật/deploy lại Apps Script.`, 9000);
+      return;
+    }
     try{
       postByHiddenForm(url, payload, 'exportdays');
       audit('auto_exportdays_fallback', String(err.message || err)); saveLocal();
@@ -1136,12 +1148,35 @@ function loadCloud(){
   script.src = url + (url.includes('?')?'&':'?') + 'action=load&callback=' + encodeURIComponent(cb) + '&t=' + Date.now();
   document.body.appendChild(script);
 }
-function pingCloud(){
+function readCloudInfo(url=cloudUrl()){
+  return new Promise(resolve=>{
+    if(!url){ resolve(null); return; }
+    const cb='wcInfoCb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    const script=document.createElement('script');
+    let timer;
+    const finish=data=>{
+      clearTimeout(timer);
+      try{ delete window[cb]; }catch(e){}
+      script.remove();
+      resolve(data || null);
+    };
+    window[cb]=finish;
+    script.onerror=()=>finish(null);
+    timer=setTimeout(()=>finish(null), 8000);
+    script.src=url+(url.includes('?')?'&':'?')+'action=ping&callback='+encodeURIComponent(cb)+'&t='+Date.now();
+    document.body.appendChild(script);
+  });
+}
+async function pingCloud(){
   const url=cloudUrl(); if(!url){ toast('Chưa có Apps Script URL.'); return; }
-  const cb='wcPingCb_' + Date.now();
-  window[cb]=(data)=>{ toast(data?.ok ? 'Cloud OK: ' + (data.updatedAt || '') : 'Cloud phản hồi lỗi'); delete window[cb]; script.remove(); };
-  const script=document.createElement('script'); script.onerror=()=>{ delete window[cb]; script.remove(); toast('Ping Cloud thất bại.'); };
-  script.src=url+(url.includes('?')?'&':'?')+'action=ping&callback='+encodeURIComponent(cb)+'&t='+Date.now(); document.body.appendChild(script);
+  const data = await readCloudInfo(url);
+  if(!data?.ok){ toast('Test Apps Script thất bại.'); return; }
+  const remoteSheetId = data.spreadsheetId || data.meta?.spreadsheetId || '';
+  if(remoteSheetId && remoteSheetId !== googleSheetId()){
+    toast(`Apps Script hoạt động nhưng đang trỏ nhầm Sheet ${remoteSheetId}. Sheet trong QTV là ${googleSheetId()}.`, 9000);
+    return;
+  }
+  toast(`Apps Script OK${remoteSheetId ? ' · đúng Sheet '+remoteSheetId : ''}.`);
 }
 function testGoogleSheet(){
   const url = ($('googleSheetUrl')?.value || '').trim();
@@ -1179,8 +1214,14 @@ async function exportDailySheets(){
   const total = totalPredictionRecords();
   if(!total){ toast('Chưa có dự đoán đã gửi nào để đẩy ra Google Sheet.', 5000); return; }
   saveLocal();
-  const payload=JSON.stringify({action:'exportdays', state: normalizeState(state)});
+  const payload=JSON.stringify({action:'exportdays', spreadsheetId:googleSheetId(), state: normalizeState(state)});
   try{
+    const cloudInfo = await readCloudInfo(url);
+    const remoteSheetId = cloudInfo?.spreadsheetId || cloudInfo?.meta?.spreadsheetId || '';
+    if(remoteSheetId && remoteSheetId !== googleSheetId()){
+      toast(`Không đẩy dữ liệu: Apps Script đang trỏ Sheet ${remoteSheetId}, khác Sheet trong QTV ${googleSheetId()}.`, 9000);
+      return;
+    }
     const res = await fetch(actionUrl(url, 'exportdays'), {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:payload, redirect:'follow'});
     const txt = await res.text();
     let json=null; try{ json=JSON.parse(txt); }catch(e){}
