@@ -135,6 +135,13 @@
     .status-pill.bad{color:#fecdd3;background:rgba(251,113,133,.13);border-color:rgba(251,113,133,.3)}
     .status-pill.warn{color:#fde68a;background:rgba(250,204,21,.12);border-color:rgba(250,204,21,.28)}
     .toast{
+      left:50%;
+      right:auto;
+      top:50%;
+      bottom:auto;
+      transform:translate(-50%,-50%);
+      max-width:min(560px,calc(100vw - 24px));
+      text-align:center;
       background:#f8fbff;
       color:#0b1627;
       border:1px solid rgba(96,165,250,.42);
@@ -147,6 +154,28 @@
       border-color:rgba(185,211,244,.22);
       box-shadow:inset 0 0 0 1px rgba(255,255,255,.03);
     }
+    .hero-admin-tab{font-weight:900;padding:9px 14px}
+    .hero-admin-tab.active{color:#06111f;background:linear-gradient(135deg,#36d399,#60a5fa);border-color:transparent}
+    .player-submit-status{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:100%;
+      margin:4px 0 12px;
+      padding:12px 14px;
+      border:1px solid rgba(250,204,21,.58);
+      border-left:5px solid #facc15;
+      border-radius:12px;
+      background:#152b45;
+      color:#fde68a;
+      box-shadow:0 10px 24px rgba(0,0,0,.2);
+      font-size:15px;
+      font-weight:900;
+      text-align:center;
+    }
+    .stat > span{color:#93c5fd;font-weight:700}
+    .stat .stat-player{color:#dbeafe;font-weight:500}
+    .stat .stat-value{color:#8fa6c1;font-weight:400}
     #clockPill::before{content:'🕒'}
     #cloudPill::before{content:'☁️'}
     .match-card .pick[data-pick="H"]{background:rgba(54,211,153,.15);border-color:rgba(54,211,153,.42);color:#dcfff0}
@@ -187,17 +216,16 @@
   <div class="hero">
     <div class="hero-inner">
       <div class="title"><div class="logo">⚽</div><div><h1>Portal dự đoán kết quả World Cup 2026 - P.CN</h1><p><b>Thể lệ:</b> Người chơi dự đoán kết quả <b>Thắng/Hòa/Thua</b>. Thua đóng góp <b>20k/trận</b></p></div></div>
-      <div class="chips"><span class="pill" id="clockPill">Giờ VN: --</span><span class="pill" id="cloudPill">Cloud: chưa cấu hình</span></div>
+      <div class="chips"><span class="pill" id="clockPill">Giờ VN: --</span><span class="pill" id="cloudPill">Cloud: chưa cấu hình</span><button class="pill hero-admin-tab tab" type="button" data-tab="admin">🔐 QTV</button></div>
     </div>
   </div>
   <main class="wrap" id="appRoot">
     <div class="grid" id="kpiCards"></div>
 
-    <div class="tabs">
+    <div class="tabs" style="grid-template-columns:repeat(3,1fr)">
       <button class="tab active" data-tab="predict">⚽ Dự đoán</button>
       <button class="tab" data-tab="stats">📊 Thống kê</button>
       <button class="tab" data-tab="fines">🏆 Kết quả</button>
-      <button class="tab" data-tab="admin">🔐 QTV</button>
     </div>
 
     <section id="predict" class="section active">
@@ -207,7 +235,8 @@
           <div class="field"><label>Chọn ngày dự đoán</label><select id="dateFilter"></select></div>
           <button class="btn" id="btnPrint">🖨️ In / PDF</button>
         </div>
-        <div class="notice"><b>Người chơi cần dự đoán kết quả Thắng / Hòa / Thua.</b> Mặc định web hiển thị các trận của ngày hôm nay; chỉ cần chọn tên người chơi, chọn kết quả từng trận rồi bấm <b>Gửi dự đoán</b>. Mỗi người chơi được gửi tối đa <b>3 lần cho mỗi trận</b> trước giờ bóng lăn.</div>
+        <div class="player-submit-status" id="playerSubmitInfo">Chưa chọn người chơi</div>
+        <div class="notice"><b>Người chơi cần dự đoán kết quả Thắng / Hòa / Thua.</b> Mặc định web hiển thị các trận của ngày hôm nay; chỉ cần chọn tên người chơi, chọn kết quả từng trận rồi bấm <b>Gửi dự đoán</b>. Mỗi người chơi được bấm <b>Gửi dự đoán tối đa 5 lần</b> trước giờ bóng lăn.</div>
       </div>
       <div class="toolbar submitbar">
         <button class="btn primary" id="btnSubmitPredictions">✅ Gửi dự đoán</button>
@@ -238,17 +267,20 @@
     <section id="admin" class="section">
       <div class="card pad" id="adminBox">
         <h2>QTV</h2>
-        <p class="admin-login-note">Nhập đúng mật khẩu QTV rồi bấm Enter để mở cấu hình, nhập kết quả, kéo/đẩy sheet và reset.</p>
+        <p class="admin-login-note">Nhập đúng mật khẩu QTV rồi bấm Mở QTV hoặc Enter để mở cấu hình, nhập kết quả, kéo/đẩy sheet và reset.</p>
         <div class="toolbar">
-          <div class="field"><label>Mật khẩu QTV</label><input id="adminPass" type="password" placeholder="Nhập mật khẩu QTV rồi Enter" /></div>
+          <div class="field"><label>Mật khẩu QTV</label><input id="adminPass" type="password" placeholder="Nhập mật khẩu QTV" /></div>
+          <button class="btn primary" id="btnAdminLogin">Mở QTV</button>
           <button class="btn" id="btnAdminLogout">Khóa QTV</button>
         </div>
         <div class="okbox admin-only">Đã mở QTV. Có thể nhập kết quả, đổi cấu hình cloud, export/import và reset dữ liệu.</div>
-        <div class="notice admin-only">Cloud đã được cấu hình sẵn bằng Apps Script Web App. Apps Script bản này trỏ vào Google Sheet ID <span class="code">1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ</span>. Khi người chơi bấm <b>Gửi dự đoán</b>, hệ thống sẽ tự lưu Cloud và đẩy dữ liệu sang sheet ngày.</div>
+        <div class="notice admin-only">Cloud đã được cấu hình bằng Apps Script Web App. Google Sheet đang dùng có ID <span class="code">1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ</span>. Khi người chơi bấm <b>Gửi dự đoán</b>, hệ thống sẽ tự lưu Cloud và đẩy dữ liệu sang sheet ngày.</div>
         <div class="toolbar admin-only">
+          <div class="field"><label>Google Sheet URL</label><input id="googleSheetUrl" placeholder="https://docs.google.com/spreadsheets/d/.../edit" /></div>
           <div class="field"><label>Apps Script Web App URL</label><input id="cloudUrl" placeholder="https://script.google.com/macros/s/.../exec" /></div>
           <button class="btn primary" id="btnSaveConfig">Lưu cấu hình</button>
-          <button class="btn" id="btnPingCloud">Test Cloud</button>
+          <button class="btn" id="btnTestGoogleSheet">Test Google Sheet</button>
+          <button class="btn" id="btnPingCloud">Test Apps Script</button>
           <button class="btn" id="btnLoadCloud">📥 Lấy Cloud</button>
           <button class="btn" id="btnSaveCloud">☁️ Lưu Cloud</button>
           <button class="btn" id="btnExportResultSheetCsv">⬇️ Xuất sheet kết quả</button>
@@ -263,16 +295,12 @@
           <button class="btn" id="btnLoadCloud2">📥 Lấy Cloud ngay</button>
           <button class="btn primary" id="btnImportDailySheets">🔄 Kéo dự đoán từ sheet ngày</button>
           <button class="btn warn" id="btnExportDailySheets">⬆️ Đẩy dự đoán ra sheet ngày</button>
-          <a class="btn" href="https://docs.google.com/spreadsheets/d/1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ/edit?usp=sharing" target="_blank" rel="noopener">📄 Mở Google Sheet</a>
+          <a class="btn" id="googleSheetOpenLink" href="https://docs.google.com/spreadsheets/d/1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ/edit" target="_blank" rel="noopener">📄 Mở Google Sheet</a>
           <button class="btn" id="btnExportJson">⬇️ Export JSON</button>
           <label class="btn">⬆️ Import JSON<input id="importJson" type="file" accept="application/json" hidden></label>
           <button class="btn danger" id="btnResetLocal">Xóa dữ liệu máy này</button>
         </div>
         <div class="field admin-only"><label>Log thao tác</label><textarea id="logBox" readonly></textarea></div>
-      </div>
-      <div class="toolbar admin-only function-menu">
-        <button class="btn primary admin-panel-btn" data-admin-panel="resultPanel">Nhập kết quả trận đấu</button>
-        <button class="btn danger admin-panel-btn" data-admin-panel="deletePanel">QTV xóa dự đoán người chơi</button>
       </div>
       <div class="card pad admin-only admin-panel" id="resultPanel" style="margin-top:12px"><h2>Kết quả trận đấu</h2><p class="small">Hệ thống chỉ lấy kết quả từ sheet <span class="code">KQ_TranDau</span>. QTV cập nhật hoặc xóa tỷ số trong Google Sheet rồi bấm đồng bộ.</p><div class="toolbar qtv-compact"><button class="btn primary" id="btnLoadOnlineResults">Lấy KQ từ Google Sheet</button><div class="field result-clear-field"><label>Xóa KQ ngày</label><select id="adminResultClearDate"></select></div><button class="btn danger" id="btnClearResultDate">Xóa KQ ngày</button></div><div id="resultEditor"></div></div>
       <div class="card pad admin-only danger-zone admin-panel" id="deletePanel" style="margin-top:12px;display:none">
@@ -294,6 +322,10 @@
           <li>Copy link Web App dạng <span class="code">/exec</span>, dán vào ô Cloud trong site. Sau đó có thể bấm <b>Kéo dự đoán từ sheet ngày</b> để lấy các tab 01/07, 02/07... về site, hoặc <b>Đẩy dự đoán ra sheet ngày</b> để xuất ngược dữ liệu site ra các tab ngày.</li>
         </ol>
       </div>
+      <div class="toolbar admin-only function-menu">
+        <button class="btn primary admin-panel-btn" data-admin-panel="resultPanel">Nhập kết quả trận đấu</button>
+        <button class="btn danger admin-panel-btn" data-admin-panel="deletePanel">QTV xóa dự đoán người chơi</button>
+      </div>
     </section>
 
     <p class="footer-note">Bản dựng: v1.3 · Lịch dự đoán hiển thị theo giờ Việt Nam; có thể sửa trong mảng <span class="code">MATCHES</span> nếu FIFA/nguồn lịch cập nhật thay đổi.</p>
@@ -309,11 +341,11 @@
 // =========================
 const STORAGE_KEY = 'wc2026_predict_state_v1_20260701';
 const GOOGLE_SHEET_ID = '1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ';
-const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ/edit?usp=sharing';
-const CLOUD_URL_DEFAULT = 'https://script.google.com/macros/s/AKfycbw_XvG7UfTXczCQnjZH-WlESkD38yU-P2KStmV6dvJ8FxNhr8ZW_cLNsGJjYcaJ-WNt/exec';
-const ADMIN_PASSWORD = ['V','n','p','T','@','@'].join('');
+const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ/edit';
+const CLOUD_URL_DEFAULT = 'https://script.google.com/macros/s/AKfycbw-1RyCo8haPKfP5UJ514cXvPj50cDChMReNM45hHMOWJPTq2QsiiPU1BtnJPsyEQ/exec';
+const ADMIN_PASSWORD_SHA256 = 'e6121f114d1b02a340a2f495504c92feb62a13590a161c25f282d1845aa600ad';
 const FINE_AMOUNT = 20000;
-const MAX_SUBMISSIONS = 3;
+const MAX_SUBMISSIONS = 5;
 const PREDICTION_CUTOFF_MINUTES = 5;
 const TZ_LABEL = 'Asia/Bangkok / Việt Nam';
 
@@ -416,6 +448,14 @@ function isPredictionValidForScoring(match, record){
   return new Date(submittedAt).getTime() <= new Date(match.kickoff).getTime() - PREDICTION_CUTOFF_MINUTES * 60000;
 }
 function cloudUrl(){ return localStorage.getItem('wc2026_cloud_url') || CLOUD_URL_DEFAULT || ''; }
+function googleSheetUrl(){ return localStorage.getItem('wc2026_google_sheet_url') || GOOGLE_SHEET_URL; }
+function validGoogleSheetUrl(url){ return /^https:\/\/docs\.google\.com\/spreadsheets\/d\/[a-zA-Z0-9_-]+(?:\/|$)/.test(String(url || '').trim()); }
+function googleSheetId(){ return String(googleSheetUrl()).match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/)?.[1] || GOOGLE_SHEET_ID; }
+async function sha256(value){
+  const bytes = new TextEncoder().encode(value);
+  const hash = await crypto.subtle.digest('SHA-256', bytes);
+  return [...new Uint8Array(hash)].map(byte=>byte.toString(16).padStart(2,'0')).join('');
+}
 function actionUrl(url, action){
   if(!action) return url;
   return url + (url.includes('?') ? '&' : '?') + 'action=' + encodeURIComponent(action);
@@ -526,6 +566,21 @@ function submitCount(matchId, player){
   return r.choice ? 1 : 0;
 }
 function remainingSubmits(matchId, player){ return Math.max(0, MAX_SUBMISSIONS - submitCount(matchId, player)); }
+function submitAttemptCountForMatches(matches, player){
+  if(!player || !matches.length) return 0;
+  return Math.max(0, ...matches.map(m=>submitCount(m.id, player)));
+}
+function remainingSubmitAttempts(matches, player){ return Math.max(0, MAX_SUBMISSIONS - submitAttemptCountForMatches(matches, player)); }
+function renderPlayerSubmitInfo(){
+  const el = $('playerSubmitInfo');
+  if(!el) return;
+  const player = getSelectedPlayer();
+  if(!player){ el.textContent = 'Chưa chọn người chơi'; return; }
+  const ms = filteredMatches();
+  const count = submitAttemptCountForMatches(ms, player);
+  const label = $('dateFilter').value === 'all' ? 'các ngày đang xem' : 'ngày ' + displayDay($('dateFilter').value);
+  el.textContent = `${shortPlayerName(player)} đã dự đoán thành công ${count}/${MAX_SUBMISSIONS} lần · ${label}`;
+}
 function draftChoice(matchId){ return draftPredictions[matchId] || ''; }
 function activeChoice(matchId, player){ return draftChoice(matchId) || predRecord(matchId, player)?.choice || ''; }
 function resultRate(row){ const den = row.correct + row.wrong; return den ? Math.round(row.correct * 100 / den) + '%' : '--'; }
@@ -562,8 +617,8 @@ function renderKpis(){
   const topWrong = [...rows].sort((a,b)=>b.wrong-a.wrong || a.correct-b.correct || a.total-b.total)[0];
   const todayMatches = MATCHES.filter(m=>matchDayKey(m)===todayKeyVN()).length;
   $('kpiCards').innerHTML = [
-    ['Top 1 đoán đúng', topCorrect ? topCorrect.name : '--', topCorrect ? `${topCorrect.correct} đúng` : 'Chưa có dữ liệu', 'Người có nhiều trận đúng nhất'],
-    ['Top 1 đoán sai', topWrong ? topWrong.name : '--', topWrong ? `${topWrong.wrong} sai` : 'Chưa có dữ liệu', 'Người có nhiều trận sai nhất'],
+    ['Top 1 đoán đúng', topCorrect ? topCorrect.name : '--', topCorrect ? `${topCorrect.correct} đúng · Đóng góp ${money(topCorrect.total)}` : 'Chưa có dữ liệu', 'Người có nhiều trận đúng nhất'],
+    ['Top 1 đoán sai', topWrong ? topWrong.name : '--', topWrong ? `${topWrong.wrong} sai · Đóng góp ${money(topWrong.total)}` : 'Chưa có dữ liệu', 'Người có nhiều trận sai nhất'],
     ['Số trận có KQ', done + '/' + MATCHES.length, todayMatches ? todayMatches + ' trận hôm nay' : 'Đã nhập kết quả', 'Kết quả đã nhập cho các trận'],
     ['Tổng đóng góp', money(totalFine), 'Theo luật hiện tại', 'Sai hoặc thiếu dự đoán']
   ].map(x=>`<div class="card pad stat"><span>${x[0]}</span><b>${escapeHtml(x[1])}</b><div class="stat-player">${escapeHtml(x[2])}</div><div class="stat-value">${escapeHtml(x[3])}</div></div>`).join('');
@@ -574,9 +629,12 @@ function renderMatches(){
   const dates = [...new Set(ms.map(m=>matchDayKey(m)))];
   const draftNum = Object.keys(draftPredictions).filter(mid => ms.some(m=>m.id===mid)).length;
   if($('draftInfo')) $('draftInfo').textContent = draftNum ? `Đang có ${draftNum} lựa chọn nháp · bấm Gửi dự đoán để lưu` : 'Chưa có lựa chọn nháp';
+  renderPlayerSubmitInfo();
   const needPlayerNotice = player ? '' : '<div class="notice"><b>Chọn tên người chơi ở phía trên để bắt đầu dự đoán.</b> Danh sách trận ngày hiện tại vẫn hiển thị sẵn bên dưới.</div>';
   $('matchList').innerHTML = needPlayerNotice + dates.map((d, di)=>{
     const dayMatches = ms.filter(m=>matchDayKey(m)===d);
+    const daySubmitCount = submitAttemptCountForMatches(dayMatches, player);
+    const dayRemain = Math.max(0, MAX_SUBMISSIONS - daySubmitCount);
     const cards = dayMatches.map(m=>{
       const saved = predRecord(m.id, player);
       const draft = draftChoice(m.id);
@@ -584,11 +642,10 @@ function renderMatches(){
       const done = resultStatus(m);
       const locked = isLocked(m);
       const countSubmit = submitCount(m.id, player);
-      const remain = remainingSubmits(m.id, player);
       const submittedAt = predictionSubmittedAt(saved);
-      const disabled = !player || locked || done || remain <= 0;
+      const disabled = !player || locked || done || dayRemain <= 0;
       const res = state.results[m.id];
-      let badge = !player ? '<span class="badge lock">Chọn người chơi</span>' : done ? `<span class="badge done">KQ: ${res.homeScore}-${res.awayScore} · ${choiceLabel(res.result,m)}</span>` : locked ? '<span class="badge lock">Đã khóa chọn</span>' : remain<=0 ? '<span class="badge bad">Đã dùng đủ 3 lần gửi</span>' : '<span class="badge open">Đang mở chọn</span>';
+      let badge = !player ? '<span class="badge lock">Chọn người chơi</span>' : done ? `<span class="badge done">KQ: ${res.homeScore}-${res.awayScore} · ${choiceLabel(res.result,m)}</span>` : locked ? '<span class="badge lock">Đã khóa chọn</span>' : dayRemain<=0 ? '<span class="badge bad">Đã dùng đủ 5 lần gửi</span>' : '<span class="badge open">Đang mở chọn</span>';
       const count=predCount(m.id); const pct=Math.round(count*100/PLAYERS.length);
       return `<div class="match-card daytone-${di%6}">
         <div class="match-head"><div><div class="match-meta">${m.id} · ${m.round} · ${vnDate(m.kickoff)}</div><div class="teams">${escapeHtml(m.home)} <span class="small">vs</span> ${escapeHtml(m.away)}</div><div class="venue">${escapeHtml(m.venue)} · ${TZ_LABEL}</div></div>${badge}</div>
@@ -597,7 +654,7 @@ function renderMatches(){
           <button class="pick ${pred==='D'?'active':''} ${draft==='D'?'draft':''}" ${disabled?'disabled':''} data-pick="D" data-mid="${m.id}">Hòa</button>
           <button class="pick ${pred==='A'?'active':''} ${draft==='A'?'draft':''}" ${disabled?'disabled':''} data-pick="A" data-mid="${m.id}">${escapeHtml(m.away)} thắng</button>
         </div>
-        <div style="margin-top:12px" class="small">Đã dự đoán: <b>${count}/${PLAYERS.length}</b> người · Lựa chọn hiện tại: <b>${escapeHtml(choiceLabel(pred,m))}</b>${draft ? ' <span class="fine-warn">(chưa gửi)</span>' : ''} · Đã gửi: <b>${countSubmit}/${MAX_SUBMISSIONS}</b>, còn <b>${remain}</b> lần${submittedAt ? ' · Giờ gửi: <b>'+escapeHtml(vnDateTime(submittedAt))+'</b>' : ''}</div><div class="progress" style="margin-top:8px"><div class="bar" style="width:${pct}%"></div></div>
+        <div style="margin-top:12px" class="small">Đã dự đoán: <b>${count}/${PLAYERS.length}</b> người · Lựa chọn hiện tại: <b>${escapeHtml(choiceLabel(pred,m))}</b>${draft ? ' <span class="fine-warn">(chưa gửi)</span>' : ''} · Nút gửi: <b>${daySubmitCount}/${MAX_SUBMISSIONS}</b>, còn <b>${dayRemain}</b> lần · Trận này đã ghi: <b>${countSubmit}/${MAX_SUBMISSIONS}</b>${submittedAt ? ' · Giờ gửi: <b>'+escapeHtml(vnDateTime(submittedAt))+'</b>' : ''}</div><div class="progress" style="margin-top:8px"><div class="bar" style="width:${pct}%"></div></div>
       </div>`;
     }).join('');
     return `<div class="day-group"><div class="day-head"><h3>Ngày ${displayDay(d)}</h3><span class="small">${dayMatches.length} trận · màu nhóm ngày ${di+1}</span></div><div class="day-body">${cards}</div></div>`;
@@ -778,8 +835,8 @@ function renderFines(){
   }).join('');
   const topGold = [...rows].sort((a,b)=>b.correct-a.correct || a.wrong-b.wrong || a.total-b.total).slice(0,5);
   const topBad = [...rows].sort((a,b)=>b.wrong-a.wrong || a.correct-b.correct || a.total-b.total).slice(0,5);
-  const goldList = topGold.map((r,i)=>`<li class="rank-item ${i===0?'top1':''}"><div class="rank-pos">${i+1}</div><div class="rank-info"><strong>${escapeHtml(r.name)}</strong><span>${r.correct} đúng · ${r.wrong} sai</span></div><div class="rank-score">${r.correct}✓</div></li>`).join('');
-  const badList = topBad.map((r,i)=>`<li class="rank-item ${i===0?'top1':''}"><div class="rank-pos">${i+1}</div><div class="rank-info"><strong>${escapeHtml(r.name)}</strong><span>${r.wrong} sai · ${r.correct} đúng</span></div><div class="rank-score">${r.wrong}✕</div></li>`).join('');
+  const goldList = topGold.map((r,i)=>`<li class="rank-item ${i===0?'top1':''}"><div class="rank-pos">${i+1}</div><div class="rank-info"><strong>${escapeHtml(r.name)}</strong><span>${r.correct} đúng · ${r.wrong} sai · Đóng góp ${money(r.total)}</span></div><div class="rank-score">${r.correct}✓</div></li>`).join('');
+  const badList = topBad.map((r,i)=>`<li class="rank-item ${i===0?'top1':''}"><div class="rank-pos">${i+1}</div><div class="rank-info"><strong>${escapeHtml(r.name)}</strong><span>${r.wrong} sai · ${r.correct} đúng · Đóng góp ${money(r.total)}</span></div><div class="rank-score">${r.wrong}✕</div></li>`).join('');
   $('fineTables').innerHTML = `<div class="kpi-row"><div class="card pad stat"><span>Tổng đóng góp</span><b>${money(total)}</b><p class="small">${doneMatches().length} trận đã nhập kết quả</p></div><div class="card pad stat"><span>Mức đóng góp</span><b>${money(FINE_AMOUNT)}</b><p class="small">/ trận sai</p></div><div class="card pad stat"><span>Tỷ lệ đúng</span><b>${overallResultRate()}</b><p class="small">Tính trên các dự đoán đã có kết quả</p></div></div>
   <div class="rank-grid"><div class="rank-card good"><h4><span class="rank-icon">🏅</span>Top 5 bàn tay vàng</h4><ul class="rank-list">${goldList || '<li class="rank-item"><div class="rank-info"><strong>Chưa có dữ liệu</strong><span>Hãy đợi kết quả trận đầu tiên</span></div></li>'}</ul></div><div class="rank-card bad"><h4><span class="rank-icon">⚠️</span>Top 5 bàn tay thối</h4><ul class="rank-list">${badList || '<li class="rank-item"><div class="rank-info"><strong>Chưa có dữ liệu</strong><span>Hãy đợi kết quả trận đầu tiên</span></div></li>'}</ul></div></div>
   <h3>Tổng hợp theo người chơi</h3><div style="overflow:auto"><table><thead><tr><th>STT</th><th>Người chơi</th><th class="center">Đúng</th><th class="center">Sai</th><th class="center">Thiếu</th><th class="center">Tỷ lệ đúng</th><th class="right">Tổng đóng góp</th></tr></thead><tbody>${body}</tbody></table></div>`;
@@ -802,6 +859,8 @@ function renderResults(){
 }
 function renderAdminFields(){
   if($('cloudUrl')) $('cloudUrl').value = cloudUrl();
+  if($('googleSheetUrl')) $('googleSheetUrl').value = googleSheetUrl();
+  if($('googleSheetOpenLink')) $('googleSheetOpenLink').href = googleSheetUrl();
   if($('missingPenalty')) $('missingPenalty').value = state.settings.missingPenalty ? 'yes' : 'no';
   document.querySelectorAll('.admin-panel').forEach(el=>el.style.display = el.id===activeAdminPanel ? '' : 'none');
   document.querySelectorAll('.admin-panel-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.adminPanel===activeAdminPanel));
@@ -857,6 +916,11 @@ async function submitPredictions(){
   const player=getSelectedPlayer();
   if(!player){ toast('Vui lòng chọn tên người chơi trước khi gửi dự đoán.'); return; }
   const ms=filteredMatches().filter(m=>!isLocked(m) && !resultStatus(m));
+  const submitAttempt = submitAttemptCountForMatches(ms, player);
+  if(submitAttempt >= MAX_SUBMISSIONS){
+    toast(`${player} đã dùng đủ ${MAX_SUBMISSIONS}/${MAX_SUBMISSIONS} lần gửi dự đoán trong ngày/phạm vi đang xem.`, 6000);
+    return;
+  }
   const missing = ms.filter(m=>!(draftPredictions[m.id] || predRecord(m.id, player)?.choice));
   if(missing.length){ toast('Bạn cần chọn đủ các trận trong ngày đang xem trước khi gửi: ' + missing.map(m=>m.id).join(', '), 6000); return; }
   const selected=ms.filter(m=>draftPredictions[m.id] || predRecord(m.id, player)?.choice);
@@ -867,13 +931,13 @@ async function submitPredictions(){
     if(!choice){ skipped.push(m.id + ' chưa chọn'); return; }
     if(isLocked(m) || resultStatus(m)){ skipped.push(m.id + ' đã khóa'); return; }
     const cnt=submitCount(m.id, player);
-    if(cnt >= MAX_SUBMISSIONS){ skipped.push(m.id + ' đã đủ 3 lần'); return; }
+    if(cnt >= MAX_SUBMISSIONS){ skipped.push(m.id + ' đã đủ 5 lần'); return; }
     state.predictions[m.id] = state.predictions[m.id] || {};
     const old = state.predictions[m.id][player] || {};
     const now = new Date().toISOString();
     const history = Array.isArray(old.history) ? old.history.slice() : [];
     history.push({choice, updatedAt: now, submittedAt: now});
-    state.predictions[m.id][player] = {choice, updatedAt: now, submittedAt: now, submitCount: cnt + 1, history};
+    state.predictions[m.id][player] = {choice, updatedAt: now, submittedAt: now, submitCount: submitAttempt + 1, history};
     delete draftPredictions[m.id];
     saved++;
   });
@@ -881,7 +945,7 @@ async function submitPredictions(){
   audit('submit_predictions', `${player} gửi ${saved} dự đoán${skipped.length ? ' · bỏ qua: '+skipped.join('; ') : ''}`);
   saveLocal(); render();
   const dayMsg = $('dateFilter').value === 'all' ? 'các ngày đang chọn' : 'ngày ' + displayDay($('dateFilter').value);
-  const baseMsg = `Bạn đã gửi dự đoán ${dayMsg} thành công. Đã ghi ${saved} dự đoán cho ${player}${skipped.length ? '; bỏ qua: '+skipped.join('; ') : ''}.`;
+  const baseMsg = `Bạn đã gửi dự đoán ${dayMsg} thành công. ${player} đã dự đoán thành công ${submitAttempt + 1}/${MAX_SUBMISSIONS} lần. Đã ghi ${saved} dự đoán${skipped.length ? '; bỏ qua: '+skipped.join('; ') : ''}.`;
   toast(baseMsg + (cloudUrl() ? ' Đang lưu Cloud và đẩy Google Sheet...' : ''), 5000);
   if(cloudUrl()){
     await saveCloud({successMessage:`Bạn đã gửi dự đoán ${dayMsg} thành công và đã lưu Cloud.`});
@@ -1006,7 +1070,7 @@ async function deletePlayerPredictions(){
 }
 
 function getCloudPayload(){
-  return {ok:true, type:'wc2026-predict-state', savedAt:new Date().toISOString(), state: normalizeState(state), sheetSummary:{results:buildResultsSheetRows(), thongKeDuDoan:buildThongKeDuDoanRows(), thongKeDuDoanExportRows:buildThongKeDuDoanExportRows()}};
+  return {ok:true, type:'wc2026-predict-state', savedAt:new Date().toISOString(), spreadsheetId:googleSheetId(), state: normalizeState(state), sheetSummary:{results:buildResultsSheetRows(), thongKeDuDoan:buildThongKeDuDoanRows(), thongKeDuDoanExportRows:buildThongKeDuDoanExportRows()}};
 }
 async function saveCloud(options={}){
   const url=cloudUrl(); if(!url){ toast('Chưa có Apps Script URL. Vào QTV để dán link.'); return; }
@@ -1032,7 +1096,7 @@ async function autoExportDailySheetsAfterSubmit(dayMsg='ngày đang chọn'){
   const total = totalPredictionRecords();
   if(!total) return;
   saveLocal();
-  const payload=JSON.stringify({action:'exportdays', state: normalizeState(state)});
+  const payload=JSON.stringify({action:'exportdays', spreadsheetId:googleSheetId(), state: normalizeState(state)});
   try{
     const res = await fetch(actionUrl(url, 'exportdays'), {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:payload, redirect:'follow'});
     const txt = await res.text();
@@ -1079,9 +1143,17 @@ function pingCloud(){
   const script=document.createElement('script'); script.onerror=()=>{ delete window[cb]; script.remove(); toast('Ping Cloud thất bại.'); };
   script.src=url+(url.includes('?')?'&':'?')+'action=ping&callback='+encodeURIComponent(cb)+'&t='+Date.now(); document.body.appendChild(script);
 }
+function testGoogleSheet(){
+  const url = ($('googleSheetUrl')?.value || '').trim();
+  if(!validGoogleSheetUrl(url)){ toast('Link Google Sheet không hợp lệ.'); return; }
+  window.open(url, '_blank', 'noopener');
+  toast('Đã mở Google Sheet để kiểm tra quyền truy cập.');
+}
 
-function importDailySheets(){
+function importDailySheets(options={}){
   const url=cloudUrl(); if(!url){ toast('Chưa có Apps Script URL. Deploy Apps Script rồi dán link /exec trước.'); return; }
+  const bootstrapPayload = JSON.stringify(getCloudPayload());
+  try{ postByHiddenForm(url, bootstrapPayload, 'save'); }catch(e){ console.warn(e); }
   const cb='wcImportDaysCb_' + Date.now();
   window[cb] = (data) => {
     try{
@@ -1089,7 +1161,7 @@ function importDailySheets(){
       mergeState(data.state || {});
       const total = (data.report || []).reduce((s,r)=>s + Number(r.imported || 0), 0);
       log('Import sheet ngày: ' + JSON.stringify(data.report || [], null, 2));
-      toast('Đã kéo dự đoán từ các sheet ngày: ' + total + ' lượt chọn.');
+      if(!options.silent) toast('Đã kéo dự đoán từ các sheet ngày: ' + total + ' lượt chọn.');
       render();
     }catch(e){ toast('Lỗi kéo sheet ngày: ' + (e.message || e), 6000); }
     finally{ delete window[cb]; script.remove(); }
@@ -1097,7 +1169,7 @@ function importDailySheets(){
   const script=document.createElement('script');
   script.onerror=()=>{ delete window[cb]; script.remove(); toast('Không gọi được Apps Script action=syncdays.', 6000); };
   script.src = url + (url.includes('?')?'&':'?') + 'action=syncdays&callback=' + encodeURIComponent(cb) + '&t=' + Date.now();
-  document.body.appendChild(script);
+  setTimeout(()=>document.body.appendChild(script), options.bootstrapDelay || 1400);
 }
 async function exportDailySheets(){
   if(!isAdmin){ toast('Cần mở QTV để đẩy dữ liệu ra sheet ngày.'); return; }
@@ -1174,11 +1246,32 @@ function bind(){
   if($('btnClearDraft')) $('btnClearDraft').onclick=clearDrafts;
   if($('btnDeletePrediction')) $('btnDeletePrediction').onclick=deletePlayerPredictions;
   if($('btnResetStatsFilter')) $('btnResetStatsFilter').onclick=()=>{ $('statsPlayerSearch').value=''; activeStatsMode='current5'; renderStats(); };
-  if($('adminPass')) $('adminPass').addEventListener('keydown', e=>{ if(e.key==='Enter'){ if($('adminPass').value===ADMIN_PASSWORD){ isAdmin=true; toast('Đã mở QTV.'); render(); } else toast('Sai mật khẩu QTV.'); }});
+  const openAdmin = async ()=>{
+    if(await sha256($('adminPass').value)===ADMIN_PASSWORD_SHA256){
+      isAdmin=true;
+      toast('Đã mở QTV.');
+      render();
+    }else{
+      toast('Sai mật khẩu QTV.');
+    }
+  };
+  if($('adminPass')) $('adminPass').addEventListener('keydown', e=>{ if(e.key==='Enter') openAdmin(); });
+  if($('btnAdminLogin')) $('btnAdminLogin').onclick=openAdmin;
   $('btnAdminLogout').onclick=()=>{ isAdmin=false; $('adminPass').value=''; toast('Đã khóa QTV.'); render(); };
-  $('btnSaveConfig').onclick=()=>{ localStorage.setItem('wc2026_cloud_url', $('cloudUrl').value.trim()); toast('Đã lưu cấu hình Cloud trên máy này.'); render(); };
+  $('btnSaveConfig').onclick=async ()=>{
+    const sheetUrl = $('googleSheetUrl').value.trim();
+    const scriptUrl = $('cloudUrl').value.trim();
+    if(!validGoogleSheetUrl(sheetUrl)){ toast('Link Google Sheet không hợp lệ.'); return; }
+    if(scriptUrl && !/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec(?:\?|$)/.test(scriptUrl)){ toast('Link Apps Script phải là Web App URL kết thúc bằng /exec.'); return; }
+    localStorage.setItem('wc2026_google_sheet_url', sheetUrl);
+    localStorage.setItem('wc2026_cloud_url', scriptUrl);
+    toast('Đã lưu link Google Sheet và Apps Script trên máy này.');
+    render();
+    if(scriptUrl) await saveCloud({successMessage:'Đã lưu cấu hình và đồng bộ Google Sheet với Apps Script.'});
+  };
   $('btnSaveSettings').onclick=()=>{ state.settings.missingPenalty = $('missingPenalty').value==='yes'; audit('settings','missingPenalty='+state.settings.missingPenalty); saveLocal(); render(); toast('Đã lưu luật phạt.'); };
   $('btnPingCloud').onclick=pingCloud;
+  if($('btnTestGoogleSheet')) $('btnTestGoogleSheet').onclick=testGoogleSheet;
   if($('btnImportDailySheets')) $('btnImportDailySheets').onclick=importDailySheets;
   if($('btnExportDailySheets')) $('btnExportDailySheets').onclick=exportDailySheets;
   if($('btnExportJson')) $('btnExportJson').onclick=exportJson;
@@ -1195,8 +1288,11 @@ function bind(){
 }
 
 loadLocal(); cleanupTestResults20260701(); bind(); render();
-// Tự lấy Cloud khi đã hard-code hoặc máy đã lưu URL.
-if(cloudUrl()) setTimeout(loadCloud, 800);
+// Tự lấy Cloud và đồng bộ sheet ngày khi đã hard-code URL.
+if(cloudUrl()){
+  setTimeout(loadCloud, 800);
+  setTimeout(()=>importDailySheets({silent:true, bootstrapDelay:1600}), 2600);
+}
 </script>
 </body>
 </html>
