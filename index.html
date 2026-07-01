@@ -1131,22 +1131,53 @@ function postByHiddenForm(url, payload, action=''){
   if(action){ const actionInput=document.createElement('input'); actionInput.type='hidden'; actionInput.name='action'; actionInput.value=action; form.appendChild(actionInput); }
   document.body.appendChild(form); form.submit(); setTimeout(()=>form.remove(), 2000);
 }
-function loadCloud(){
-  const url=cloudUrl(); if(!url){ toast('Chưa có Apps Script URL. Vào QTV để dán link.'); return; }
-  const cb='wcCloudCb_' + Date.now();
-  window[cb] = (data) => {
-    try{
-      const remote = data?.state || data;
-      mergeState(remote);
-      cleanupTestResults20260701('cloud');
-      toast('Đã lấy và gộp dữ liệu Cloud.'); audit('cloud_load','jsonp ok'); saveLocal(); render();
-    }catch(e){ toast('Lỗi đọc Cloud: ' + (e.message || e), 5000); }
-    finally{ delete window[cb]; script.remove(); }
-  };
-  const script=document.createElement('script');
-  script.onerror=()=>{ delete window[cb]; script.remove(); toast('Không tải được Cloud. Kiểm tra URL Apps Script và quyền Anyone.', 5000); };
-  script.src = url + (url.includes('?')?'&':'?') + 'action=load&callback=' + encodeURIComponent(cb) + '&t=' + Date.now();
-  document.body.appendChild(script);
+function readCloudState(url){
+  return new Promise(resolve=>{
+    if(!url){ resolve(null); return; }
+    const cb='wcLoadCb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    const script=document.createElement('script');
+    let timer;
+    const finish=data=>{
+      clearTimeout(timer);
+      try{ delete window[cb]; }catch(e){}
+      script.remove();
+      resolve(data || null);
+    };
+    window[cb]=finish;
+    script.onerror=()=>finish(null);
+    timer=setTimeout(()=>finish(null), 12000);
+    script.src=url+(url.includes('?')?'&':'?')+'action=load&callback='+encodeURIComponent(cb)+'&t='+Date.now();
+    document.body.appendChild(script);
+  });
+}
+function playerCloudSummary(player){
+  const records=[];
+  for(const [matchId, byPlayer] of Object.entries(state.predictions || {})){
+    if(byPlayer?.[player]) records.push({matchId, ...byPlayer[player]});
+  }
+  return {matches:records.length, maxSubmit:records.reduce((max,r)=>Math.max(max, Number(r.submitCount || r.history?.length || 1)),0)};
+}
+async function loadCloud(){
+  const currentUrl=cloudUrl();
+  if(!currentUrl){ toast('Chưa có Apps Script URL. Vào QTV để dán link.'); return; }
+  const urls=[currentUrl];
+  if(CLOUD_URL_DEFAULT && CLOUD_URL_DEFAULT !== currentUrl) urls.push(CLOUD_URL_DEFAULT);
+  const responses=await Promise.all(urls.map(readCloudState));
+  let loaded=0;
+  responses.forEach(data=>{
+    if(!data || data.ok===false) return;
+    mergeState(data.state || data);
+    loaded++;
+  });
+  if(!loaded){ toast('Không tải được Cloud. Kiểm tra Apps Script URL và quyền Anyone.', 6000); return; }
+  cleanupTestResults20260701('cloud');
+  audit('cloud_load', `Đã gộp ${loaded}/${urls.length} nguồn Cloud`); saveLocal(); render();
+  const tienThang=playerCloudSummary('Nguyễn Tiến Thắng');
+  if(urls.length > 1 && responses[1]){
+    await saveCloud({successMessage:`Đã khôi phục Cloud cũ sang Cloud mới. Tiến Thắng có ${tienThang.matches} trận, tối đa ${tienThang.maxSubmit}/${MAX_SUBMISSIONS} lần.`});
+  }else{
+    toast(`Đã lấy Cloud. Tiến Thắng có ${tienThang.matches} trận, tối đa ${tienThang.maxSubmit}/${MAX_SUBMISSIONS} lần.`, 6500);
+  }
 }
 function readCloudInfo(url=cloudUrl()){
   return new Promise(resolve=>{
@@ -1329,10 +1360,9 @@ function bind(){
 }
 
 loadLocal(); cleanupTestResults20260701(); bind(); render();
-// Tự lấy Cloud và đồng bộ sheet ngày khi đã hard-code URL.
+// Chỉ tự lấy Cloud; đồng bộ sheet ngày thực hiện thủ công trong QTV để tránh ghi đè khi tải trang.
 if(cloudUrl()){
   setTimeout(loadCloud, 800);
-  setTimeout(()=>importDailySheets({silent:true, bootstrapDelay:1600}), 2600);
 }
 </script>
 </body>
