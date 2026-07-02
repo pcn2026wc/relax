@@ -443,6 +443,39 @@ const MATCHES = [
   {id:'M104', round:'Chung kết', kickoff:'2026-07-20T02:00:00+07:00', home:'W101', away:'W102', venue:'New Jersey'}
 ];
 
+MATCHES.forEach(match=>{
+  match.homeSlot=match.home;
+  match.awaySlot=match.away;
+});
+
+// Các trận đầu nhánh nằm ngoài dữ liệu site hoặc từng bị lệch mã M77/M78.
+const BRACKET_SLOT_OVERRIDES = {
+  W73:'Canada', W74:'Paraguay', W75:'Morocco', W76:'Brazil', W77:'France', W78:'Norway',
+  W79:'Mexico', W80:'England', W82:'Belgium'
+};
+
+function resolveBracketSlot(slot){
+  if(BRACKET_SLOT_OVERRIDES[slot]) return BRACKET_SLOT_OVERRIDES[slot];
+  const parsed=String(slot || '').match(/^([WL])(M?\d+)$/i);
+  if(!parsed) return slot;
+  const sourceId=parsed[2].toUpperCase().startsWith('M') ? parsed[2].toUpperCase() : 'M'+parsed[2];
+  const source=MATCHES.find(match=>match.id===sourceId);
+  const result=state?.results?.[sourceId];
+  if(!source || result?.status!=='done' || !['H','A'].includes(result.result)) return `${parsed[1].toUpperCase()==='W'?'Thắng':'Thua'} ${sourceId}`;
+  const winner=result.result==='H' ? source.home : source.away;
+  const loser=result.result==='H' ? source.away : source.home;
+  return parsed[1].toUpperCase()==='W' ? winner : loser;
+}
+
+function refreshBracketTeams(){
+  for(let pass=0;pass<4;pass++){
+    MATCHES.forEach(match=>{
+      match.home=resolveBracketSlot(match.homeSlot);
+      match.away=resolveBracketSlot(match.awaySlot);
+    });
+  }
+}
+
 let state = defaultState();
 let isAdmin = false;
 let draftPredictions = {};
@@ -558,6 +591,7 @@ function mergeState(remote){
 }
 
 function render(){
+  refreshBracketTeams();
   document.body.classList.toggle('admin', isAdmin);
   $('clockPill').textContent = 'Giờ VN: ' + nowVN();
   $('cloudPill').textContent = cloudUrl() ? 'Cloud: đã cấu hình mới' : 'Cloud: chưa nối Apps Script mới';
@@ -1327,9 +1361,12 @@ async function loadCloud(){
   let direct={records:0,players:0,days:0};
   try{ direct=await importDirectPredictionsFromSheet(getStatsDateRange('current5')); }
   catch(e){ console.warn('Không đọc được dự đoán trực tiếp từ Google Sheet',e); }
+  let directResults=0;
+  try{ directResults=await importDirectResultsFromSheet(); }
+  catch(e){ console.warn('Không đọc được kết quả trực tiếp từ Google Sheet',e); }
   if(!loaded && !direct.records){ toast('Không tải được cả Cloud lẫn Google Sheet. Kiểm tra link và quyền truy cập.', 7000); return; }
   cleanupTestResults20260701('cloud');
-  audit('cloud_load', `Đã gộp ${loaded}/${urls.length} Cloud và ${direct.records} ô dự đoán trực tiếp`); saveLocal(); render();
+  audit('cloud_load', `Đã gộp ${loaded}/${urls.length} Cloud, ${direct.records} ô dự đoán và ${directResults} kết quả`); saveLocal(); render();
   const syncMessage=direct.records
     ? `Đã đồng bộ dữ liệu từ Cloud và Google Sheet. Cập nhật ${direct.records} ô dự đoán.`
     : 'Đã đồng bộ dữ liệu dự đoán từ Cloud.';
@@ -1502,6 +1539,10 @@ function bind(){
   if($('importJson')) $('importJson').addEventListener('change', async e=>{ const file=e.target.files?.[0]; if(!file) return; const txt=await file.text(); const data=JSON.parse(txt); mergeState(data.state || data); toast('Đã import JSON.'); render(); e.target.value=''; });
   setInterval(render, 30000);
   setInterval(()=>$('clockPill').textContent = 'Giờ VN: ' + nowVN(), 1000);
+  setInterval(async()=>{
+    try{ await importDirectResultsFromSheet(); saveLocal(); render(); }
+    catch(e){ console.warn('Tự đồng bộ KQ_TranDau thất bại',e); }
+  }, 120000);
 }
 
 loadLocal(); cleanupTestResults20260701(); bind(); render();
