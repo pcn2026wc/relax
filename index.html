@@ -309,9 +309,9 @@
         <div class="okbox admin-only">Đã mở QTV. Có thể nhập kết quả, đổi cấu hình cloud, export/import và reset dữ liệu.</div>
         <div class="notice admin-only">Google Sheet chính có ID <span class="code">1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ</span>. Cloud cũ chỉ được đọc để khôi phục, không còn dùng để ghi dữ liệu. Cần deploy file <span class="code">google_apps_script_Code.gs</span>, lưu URL Web App mới và bấm <b>Test Apps Script</b> đến khi báo đúng Sheet ID.</div>
         <div class="toolbar admin-only">
-          <div class="field"><label>Google Sheet URL</label><input id="googleSheetUrl" placeholder="https://docs.google.com/spreadsheets/d/.../edit" /></div>
-          <div class="field"><label>Apps Script Web App URL</label><input id="cloudUrl" placeholder="https://script.google.com/macros/s/.../exec" /></div>
-          <button class="btn primary" id="btnSaveConfig">Lưu cấu hình</button>
+          <div class="field"><label>Google Sheet URL · cố định</label><input id="googleSheetUrl" readonly /></div>
+          <div class="field"><label>Apps Script Web App URL · cố định</label><input id="cloudUrl" readonly /></div>
+          <button class="btn primary" id="btnSaveConfig">Cấu hình đã cố định</button>
           <button class="btn" id="btnTestGoogleSheet">Test Google Sheet</button>
           <button class="btn" id="btnPingCloud">Test Apps Script</button>
           <button class="btn" id="btnLoadCloud">📥 Lấy Cloud</button>
@@ -376,7 +376,7 @@ const STORAGE_KEY = 'wc2026_predict_state_v1_20260701';
 const GOOGLE_SHEET_ID = '1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ';
 const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ/edit';
 const LEGACY_CLOUD_URL = 'https://script.google.com/macros/s/AKfycbw-1RyCo8haPKfP5UJ514cXvPj50cDChMReNM45hHMOWJPTq2QsiiPU1BtnJPsyEQ/exec';
-const CLOUD_URL_DEFAULT = '';
+const CLOUD_URL_DEFAULT = 'https://script.google.com/macros/s/AKfycbw_XvG7UfTXczCQnjZH-WlESkD38yU-P2KStmV6dvJ8FxNhr8ZW_cLNsGJjYcaJ-WNt/exec';
 const OBSOLETE_GOOGLE_SHEET_IDS = new Set([
   '12slxyRcBbiTSXYg3SMU0KzblYfEplREiPgPDIkof1uU',
   '1mNmHKXb6ICA7m3hK8B6S1vu1GpBcMbRWVq3ODeLkYsc'
@@ -485,24 +485,9 @@ function isPredictionValidForScoring(match, record){
   if(!record?.choice || !submittedAt) return false;
   return new Date(submittedAt).getTime() <= new Date(match.kickoff).getTime() - PREDICTION_CUTOFF_MINUTES * 60000;
 }
-function cloudUrl(){
-  const saved=localStorage.getItem('wc2026_cloud_url') || '';
-  if(saved===LEGACY_CLOUD_URL){
-    localStorage.removeItem('wc2026_cloud_url');
-    return '';
-  }
-  return saved || CLOUD_URL_DEFAULT;
-}
+function cloudUrl(){ return CLOUD_URL_DEFAULT; }
 function sheetIdFromUrl(url){ return String(url || '').match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/)?.[1] || ''; }
-function googleSheetUrl(){
-  const saved=localStorage.getItem('wc2026_google_sheet_url') || '';
-  const savedId=sheetIdFromUrl(saved);
-  if(saved && (!savedId || OBSOLETE_GOOGLE_SHEET_IDS.has(savedId))){
-    localStorage.removeItem('wc2026_google_sheet_url');
-    return GOOGLE_SHEET_URL;
-  }
-  return saved || GOOGLE_SHEET_URL;
-}
+function googleSheetUrl(){ return GOOGLE_SHEET_URL; }
 function validGoogleSheetUrl(url){ return /^https:\/\/docs\.google\.com\/spreadsheets\/d\/[a-zA-Z0-9_-]+(?:\/|$)/.test(String(url || '').trim()); }
 function googleSheetId(){
   const id=sheetIdFromUrl(googleSheetUrl());
@@ -1029,9 +1014,9 @@ async function submitPredictions(){
   saveLocal(); render();
   const dayMsg = $('dateFilter').value === 'all' ? 'các ngày đang chọn' : 'ngày ' + displayDay($('dateFilter').value);
   const baseMsg = `Bạn đã gửi dự đoán ${dayMsg} thành công. ${player} đã dự đoán thành công ${submitAttempt + 1}/${MAX_SUBMISSIONS} lần. Đã ghi ${saved} dự đoán${skipped.length ? '; bỏ qua: '+skipped.join('; ') : ''}.`;
-  toast(baseMsg + (cloudUrl() ? ' Đang lưu Cloud và đẩy Google Sheet...' : ''), 5000);
+  toast(cloudUrl() ? `Đang đồng bộ ${saved} dự đoán của ${player} lên Cloud và Google Sheet...` : baseMsg, 5000);
   if(cloudUrl()){
-    const savedToCloud=await saveCloud({successMessage:`Bạn đã gửi dự đoán ${dayMsg} thành công và đã lưu Cloud.`});
+    const savedToCloud=await saveCloud({successMessage:baseMsg + ' Đã lưu Cloud.'});
     if(savedToCloud) await autoExportDailySheetsAfterSubmit(dayMsg);
   }
 }
@@ -1500,19 +1485,7 @@ function bind(){
   if($('adminPass')) $('adminPass').addEventListener('keydown', e=>{ if(e.key==='Enter') openAdmin(); });
   if($('btnAdminLogin')) $('btnAdminLogin').onclick=openAdmin;
   $('btnAdminLogout').onclick=()=>{ isAdmin=false; $('adminPass').value=''; toast('Đã khóa QTV.'); render(); };
-  $('btnSaveConfig').onclick=async ()=>{
-    const sheetUrl = $('googleSheetUrl').value.trim();
-    const scriptUrl = $('cloudUrl').value.trim();
-    if(!validGoogleSheetUrl(sheetUrl)){ toast('Link Google Sheet không hợp lệ.'); return; }
-    if(OBSOLETE_GOOGLE_SHEET_IDS.has(sheetIdFromUrl(sheetUrl))){ toast('Đây là Google Sheet cũ. Hãy dùng Sheet ID ' + GOOGLE_SHEET_ID + '.'); return; }
-    if(scriptUrl===LEGACY_CLOUD_URL){ toast('Đây là Apps Script cũ chỉ dùng để khôi phục. Hãy dán URL Web App mới.'); return; }
-    if(scriptUrl && !/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec(?:\?|$)/.test(scriptUrl)){ toast('Link Apps Script phải là Web App URL kết thúc bằng /exec.'); return; }
-    localStorage.setItem('wc2026_google_sheet_url', sheetUrl);
-    localStorage.setItem('wc2026_cloud_url', scriptUrl);
-    toast('Đã lưu link Google Sheet và Apps Script trên máy này.');
-    render();
-    if(scriptUrl) await saveCloud({successMessage:'Đã lưu cấu hình và đồng bộ Google Sheet với Apps Script.'});
-  };
+  $('btnSaveConfig').onclick=()=>toast('Google Sheet và Apps Script đã được cố định trong site, dùng chung trên mọi trình duyệt.');
   $('btnSaveSettings').onclick=()=>{ state.settings.missingPenalty = $('missingPenalty').value==='yes'; audit('settings','missingPenalty='+state.settings.missingPenalty); saveLocal(); render(); toast('Đã lưu luật phạt.'); };
   $('btnPingCloud').onclick=pingCloud;
   if($('btnTestGoogleSheet')) $('btnTestGoogleSheet').onclick=testGoogleSheet;
