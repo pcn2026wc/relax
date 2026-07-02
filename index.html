@@ -176,6 +176,18 @@
     .stat > span{color:#93c5fd;font-weight:700}
     .stat .stat-player{color:#dbeafe;font-weight:500}
     .stat .stat-value{color:#8fa6c1;font-weight:400}
+    #kpiCards .stat{position:relative;border-top:3px solid transparent;background:#101d30}
+    #kpiCards .stat b{color:#f8fbff;text-shadow:0 1px 12px rgba(255,255,255,.12)}
+    #kpiCards .stat .stat-player{color:#e2edfa;font-weight:600}
+    #kpiCards .stat .stat-value{color:#a9bdd4;font-weight:400}
+    #kpiCards .stat:nth-child(1){border-color:#34d399;background:linear-gradient(135deg,rgba(52,211,153,.12),#101d30 52%)}
+    #kpiCards .stat:nth-child(1)>span,#kpiCards .stat:nth-child(1) b{color:#86efc1}
+    #kpiCards .stat:nth-child(2){border-color:#fb7185;background:linear-gradient(135deg,rgba(251,113,133,.12),#101d30 52%)}
+    #kpiCards .stat:nth-child(2)>span,#kpiCards .stat:nth-child(2) b{color:#fda4af}
+    #kpiCards .stat:nth-child(3){border-color:#38bdf8;background:linear-gradient(135deg,rgba(56,189,248,.12),#101d30 52%)}
+    #kpiCards .stat:nth-child(3)>span,#kpiCards .stat:nth-child(3) b{color:#7dd3fc}
+    #kpiCards .stat:nth-child(4){border-color:#facc15;background:linear-gradient(135deg,rgba(250,204,21,.13),#101d30 52%)}
+    #kpiCards .stat:nth-child(4)>span,#kpiCards .stat:nth-child(4) b{color:#fde047}
     #clockPill::before{content:'🕒'}
     #cloudPill::before{content:'☁️'}
     .match-card .pick[data-pick="H"]{background:rgba(54,211,153,.15);border-color:rgba(54,211,153,.42);color:#dcfff0}
@@ -206,16 +218,38 @@
     .choice-line b{color:#cfe2f8}
     .choice-line span{color:#eef6ff;line-height:1.45}
     .choice-line.home b{color:#bbf7d0}.choice-line.draw b{color:#fde68a}.choice-line.away b{color:#dbeafe}.choice-line.bad b,.choice-line.missing b{color:#fecdd3}
+    .predict-panel .prediction-controls{align-items:flex-end;flex-wrap:nowrap}
+    .predict-panel .compact-rules{flex:1 1 420px;min-width:280px;margin:0;padding:8px 10px;border-radius:10px;font-size:11.5px;line-height:1.35;font-style:normal;color:#d7e4f5}
+    .predict-panel .compact-rules b{font-weight:700}
+    .rank-grid{gap:8px;margin:8px 0}
+    .rank-card{padding:10px;border-radius:12px}
+    .rank-card h4{margin:0 0 6px;font-size:13px}
+    .rank-card .rank-icon{width:24px;height:24px;font-size:12px}
+    .rank-card .rank-list{gap:4px}
+    .rank-item{gap:7px;padding:6px 8px;border-radius:8px}
+    .rank-pos{min-width:22px;width:22px;height:22px;font-size:10px}
+    .rank-info strong{font-size:12px}
+    .rank-info > span{font-size:10.5px;margin-top:1px}
+    .rank-main{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+    .rank-main strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .rank-money{flex:0 0 auto;color:#fde68a;font-size:12px;font-weight:900;white-space:nowrap}
+    .rank-score{font-size:11px}
+    .fine-filters{align-items:flex-end;margin:8px 0}
+    .fine-filters .field{min-width:210px;max-width:320px}
     @media(max-width:760px){.choice-break-grid{grid-template-columns:1fr}.choice-line{grid-template-columns:1fr}}
+    @media(max-width:880px){.predict-panel .prediction-controls{display:grid;grid-template-columns:1fr 1fr}.predict-panel .compact-rules{grid-column:1/-1;min-width:0}}
     @media(max-width:520px){
       .tabs{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important}
+      .predict-panel .prediction-controls{grid-template-columns:1fr}
+      .predict-panel .compact-rules{grid-column:auto}
+      .rank-grid{grid-template-columns:1fr}
     }
   </style>
 </head>
 <body>
   <div class="hero">
     <div class="hero-inner">
-      <div class="title"><div class="logo">⚽</div><div><h1>Portal dự đoán kết quả World Cup 2026 - P.CN</h1><p><b>Thể lệ:</b> Người chơi dự đoán kết quả <b>Thắng/Hòa/Thua</b>. Thua đóng góp <b>20k/trận</b></p></div></div>
+      <div class="title"><div class="logo">⚽</div><div><h1>Portal dự đoán kết quả World Cup 2026 - P.CN</h1><p><b>Thể lệ:</b> Người chơi dự đoán kết quả <b>Thắng/Hòa/Thua</b>. Thua đóng góp <b>50k/trận</b></p></div></div>
       <div class="chips"><span class="pill" id="clockPill">Giờ VN: --</span><span class="pill" id="cloudPill">Cloud: chưa cấu hình</span><button class="pill hero-admin-tab tab" type="button" data-tab="admin">🔐 QTV</button></div>
     </div>
   </div>
@@ -230,13 +264,12 @@
 
     <section id="predict" class="section active">
       <div class="predict-panel">
-        <div class="toolbar">
+        <div class="toolbar prediction-controls">
           <div class="field"><label>Người chơi đang dự đoán</label><select id="playerSelect"></select></div>
           <div class="field"><label>Chọn ngày dự đoán</label><select id="dateFilter"></select></div>
-          <button class="btn" id="btnPrint">🖨️ In / PDF</button>
+          <div class="notice compact-rules"><b>Dự đoán Thắng / Hòa / Thua.</b> Mặc định hiện trận hôm nay. Chọn người chơi, ngày và kết quả rồi bấm <b>Gửi dự đoán</b>. Tối đa <b>5 lần</b> trước giờ bóng lăn.</div>
         </div>
         <div class="player-submit-status" id="playerSubmitInfo">Chưa chọn người chơi</div>
-        <div class="notice"><b>Người chơi cần dự đoán kết quả Thắng / Hòa / Thua.</b> Mặc định web hiển thị các trận của ngày hôm nay; chỉ cần chọn tên người chơi, chọn kết quả từng trận rồi bấm <b>Gửi dự đoán</b>. Mỗi người chơi được bấm <b>Gửi dự đoán tối đa 5 lần</b> trước giờ bóng lăn.</div>
       </div>
       <div class="toolbar submitbar">
         <button class="btn primary" id="btnSubmitPredictions">✅ Gửi dự đoán</button>
@@ -261,7 +294,7 @@
     </section>
 
     <section id="fines" class="section">
-      <div class="card pad"><h2>Bảng kết quả</h2><div id="fineTables"></div></div>
+      <div class="card pad"><h2>Bảng kết quả</h2><div id="fineTables"></div><h3>Tổng hợp theo người chơi</h3><div class="toolbar fine-filters"><div class="field"><label>Tìm theo tên</label><input id="finePlayerSearch" type="search" placeholder="Nhập tên người chơi" /></div><div class="field"><label>Chọn người chơi</label><select id="finePlayerSelect"></select></div><div class="field"><label>Sắp xếp danh sách</label><select id="finePlayerSort"><option value="fine-desc">Phạt nhiều nhất</option><option value="fine-asc">Phạt ít nhất</option><option value="name-asc">Chữ cái A–Z</option></select></div></div><div id="finePlayerTable"></div></div>
     </section>
 
     <section id="admin" class="section">
@@ -349,7 +382,7 @@ const OBSOLETE_GOOGLE_SHEET_IDS = new Set([
   '1mNmHKXb6ICA7m3hK8B6S1vu1GpBcMbRWVq3ODeLkYsc'
 ]);
 const ADMIN_PASSWORD_SHA256 = 'e6121f114d1b02a340a2f495504c92feb62a13590a161c25f282d1845aa600ad';
-const FINE_AMOUNT = 20000;
+const FINE_AMOUNT = 50000;
 const MAX_SUBMISSIONS = 5;
 const PREDICTION_CUTOFF_MINUTES = 5;
 const TZ_LABEL = 'Asia/Bangkok / Việt Nam';
@@ -849,24 +882,50 @@ function detailForPlayer(player){
   });
 }
 function renderFines(){
-  const rows=fineRows();
+  const allRows=fineRows();
+  const playerSelect=$('finePlayerSelect');
+  if(playerSelect && !playerSelect.dataset.ready){
+    playerSelect.innerHTML='<option value="">Tất cả người chơi</option>'+PLAYERS.map(player=>`<option value="${escapeHtml(player.name)}">${escapeHtml(player.name)}</option>`).join('');
+    playerSelect.dataset.ready='1';
+  }
+  const search=normalizeSheetText($('finePlayerSearch')?.value || '');
+  const selectedPlayer=playerSelect?.value || '';
+  const sortMode=$('finePlayerSort')?.value || 'fine-desc';
+  const rows=allRows.filter(row=>(!search || normalizeSheetText(row.name).includes(search)) && (!selectedPlayer || row.name===selectedPlayer));
+  if(sortMode==='fine-asc') rows.sort((a,b)=>a.total-b.total || compareVietnamesePlayerNames(a.name,b.name));
+  else if(sortMode==='name-asc') rows.sort((a,b)=>compareVietnamesePlayerNames(a.name,b.name));
+  else rows.sort((a,b)=>b.total-a.total || compareVietnamesePlayerNames(a.name,b.name));
   if(selectedResultPlayer && !PLAYERS.some(p=>p.name===selectedResultPlayer)) selectedResultPlayer = '';
-  const total=rows.reduce((s,r)=>s+r.total,0);
+  const total=allRows.reduce((s,r)=>s+r.total,0);
   const body=rows.map((r,i)=>{
     const detailRows = selectedResultPlayer===r.name ? detailForPlayer(r.name).map(x=>`<tr><td>${x.m.id}<br><span class="small">${vnDate(x.m.kickoff)}</span></td><td>${escapeHtml(x.m.home)} vs ${escapeHtml(x.m.away)}</td><td>${escapeHtml(choiceLabel(x.pred,x.m))}</td><td>${x.res.homeScore}-${x.res.awayScore}<br><span class="small">${escapeHtml(choiceLabel(x.res.result,x.m))}</span></td><td><span class="status-pill ${x.status==='Đúng'?'ok':x.status==='Sai'?'bad':'warn'}">${x.status}</span></td><td class="right">${money(x.fine)}</td></tr>`).join('') : '';
     const detail = selectedResultPlayer===r.name ? `<tr class="fine-player-detail"><td colspan="7"><div class="fine-detail-box"><b>Chi tiết: ${escapeHtml(r.name)}</b><div style="overflow:auto;margin-top:8px"><table><thead><tr><th>Mã trận</th><th>Trận</th><th>Dự đoán</th><th>Kết quả</th><th>Trạng thái</th><th class="right">Đóng góp</th></tr></thead><tbody>${detailRows || '<tr><td colspan="6">Chưa có trận nào nhập kết quả.</td></tr>'}</tbody></table></div></div></td></tr>` : '';
     return `<tr><td>${i+1}</td><td><button class="name-link" data-player-detail="${escapeHtml(r.name)}">${escapeHtml(r.name)}</button><br><span class="small">${selectedResultPlayer===r.name?'bấm lại để ẩn':'bấm tên để xem chi tiết'}</span></td><td class="center fine-ok">${r.correct}</td><td class="center fine-bad">${r.wrong}</td><td class="center fine-warn">${r.missing}</td><td class="center"><b>${resultRate(r)}</b></td><td class="right"><b>${money(r.total)}</b></td></tr>${detail}`;
   }).join('');
-  const topGold = [...rows].sort((a,b)=>b.correct-a.correct || a.wrong-b.wrong || a.total-b.total).slice(0,5);
-  const topBad = [...rows].sort((a,b)=>b.wrong-a.wrong || a.correct-b.correct || a.total-b.total).slice(0,5);
-  const goldList = topGold.map((r,i)=>`<li class="rank-item ${i===0?'top1':''}"><div class="rank-pos">${i+1}</div><div class="rank-info"><strong>${escapeHtml(r.name)}</strong><span>${r.correct} đúng · ${r.wrong} sai · Đóng góp ${money(r.total)}</span></div><div class="rank-score">${r.correct}✓</div></li>`).join('');
-  const badList = topBad.map((r,i)=>`<li class="rank-item ${i===0?'top1':''}"><div class="rank-pos">${i+1}</div><div class="rank-info"><strong>${escapeHtml(r.name)}</strong><span>${r.wrong} sai · ${r.correct} đúng · Đóng góp ${money(r.total)}</span></div><div class="rank-score">${r.wrong}✕</div></li>`).join('');
+  const topGold = [...allRows].sort((a,b)=>b.correct-a.correct || a.wrong-b.wrong || a.total-b.total).slice(0,5);
+  const topBad = [...allRows].sort((a,b)=>b.wrong-a.wrong || a.correct-b.correct || a.total-b.total).slice(0,5);
+  const goldList = topGold.map((r,i)=>`<li class="rank-item ${i===0?'top1':''}"><div class="rank-pos">${i+1}</div><div class="rank-info"><div class="rank-main"><strong>${escapeHtml(r.name)}</strong><b class="rank-money">${money(r.total)}</b></div><span>${r.correct} đúng · ${r.wrong} sai</span></div><div class="rank-score">${r.correct}✓</div></li>`).join('');
+  const badList = topBad.map((r,i)=>`<li class="rank-item ${i===0?'top1':''}"><div class="rank-pos">${i+1}</div><div class="rank-info"><div class="rank-main"><strong>${escapeHtml(r.name)}</strong><b class="rank-money">${money(r.total)}</b></div><span>${r.wrong} sai · ${r.correct} đúng</span></div><div class="rank-score">${r.wrong}✕</div></li>`).join('');
   $('fineTables').innerHTML = `<div class="kpi-row"><div class="card pad stat"><span>Tổng đóng góp</span><b>${money(total)}</b><p class="small">${doneMatches().length} trận đã nhập kết quả</p></div><div class="card pad stat"><span>Mức đóng góp</span><b>${money(FINE_AMOUNT)}</b><p class="small">/ trận sai</p></div><div class="card pad stat"><span>Tỷ lệ đúng</span><b>${overallResultRate()}</b><p class="small">Tính trên các dự đoán đã có kết quả</p></div></div>
-  <div class="rank-grid"><div class="rank-card good"><h4><span class="rank-icon">🏅</span>Top 5 bàn tay vàng</h4><ul class="rank-list">${goldList || '<li class="rank-item"><div class="rank-info"><strong>Chưa có dữ liệu</strong><span>Hãy đợi kết quả trận đầu tiên</span></div></li>'}</ul></div><div class="rank-card bad"><h4><span class="rank-icon">⚠️</span>Top 5 bàn tay thối</h4><ul class="rank-list">${badList || '<li class="rank-item"><div class="rank-info"><strong>Chưa có dữ liệu</strong><span>Hãy đợi kết quả trận đầu tiên</span></div></li>'}</ul></div></div>
-  <h3>Tổng hợp theo người chơi</h3><div style="overflow:auto"><table><thead><tr><th>STT</th><th>Người chơi</th><th class="center">Đúng</th><th class="center">Sai</th><th class="center">Thiếu</th><th class="center">Tỷ lệ đúng</th><th class="right">Tổng đóng góp</th></tr></thead><tbody>${body}</tbody></table></div>`;
+  <div class="rank-grid"><div class="rank-card good"><h4><span class="rank-icon">🏅</span>Top 5 Tinh Hoa Tiết Kiệm</h4><ul class="rank-list">${goldList || '<li class="rank-item"><div class="rank-info"><strong>Chưa có dữ liệu</strong><span>Hãy đợi kết quả trận đầu tiên</span></div></li>'}</ul></div><div class="rank-card bad"><h4><span class="rank-icon">⚠️</span>Top 5 Người Góp Phần Làm Nên Điều Kỳ Diệu</h4><ul class="rank-list">${badList || '<li class="rank-item"><div class="rank-info"><strong>Chưa có dữ liệu</strong><span>Hãy đợi kết quả trận đầu tiên</span></div></li>'}</ul></div></div>`;
+  $('finePlayerTable').innerHTML = `<div style="overflow:auto"><table><thead><tr><th>STT</th><th>Người chơi</th><th class="center">Đúng</th><th class="center">Sai</th><th class="center">Thiếu</th><th class="center">Tỷ lệ đúng</th><th class="right">Tổng đóng góp</th></tr></thead><tbody>${body || '<tr><td colspan="7" class="center">Không tìm thấy người chơi.</td></tr>'}</tbody></table></div>`;
 }
 function overallResultRate(){
   const rows=fineRows(); const c=rows.reduce((s,r)=>s+r.correct,0); const w=rows.reduce((s,r)=>s+r.wrong,0); const den=c+w; return den ? Math.round(c*100/den)+'%' : '--';
+}
+function vietnamesePlayerNameKey(name){
+  const parts=String(name || '').trim().split(/\s+/).filter(Boolean);
+  if(parts.length<2) return parts;
+  return [parts[parts.length-1], ...parts.slice(1,-1), parts[0]];
+}
+function compareVietnamesePlayerNames(a,b){
+  const left=vietnamesePlayerNameKey(a), right=vietnamesePlayerNameKey(b);
+  const length=Math.max(left.length,right.length);
+  for(let i=0;i<length;i++){
+    const compared=String(left[i] || '').localeCompare(String(right[i] || ''),'vi',{sensitivity:'base'});
+    if(compared) return compared;
+  }
+  return 0;
 }
 function renderResults(){
   const days = matchDayKeys();
@@ -1416,13 +1475,15 @@ function bind(){
   document.querySelectorAll('.stats-mode-btn').forEach(btn=>btn.addEventListener('click',()=>{ activeStatsMode=btn.dataset.statsMode || 'current5'; renderStats(); }));
   document.querySelectorAll('.admin-panel-btn').forEach(btn=>btn.addEventListener('click',()=>{ activeAdminPanel=btn.dataset.adminPanel || 'resultPanel'; renderAdminFields(); }));
   if($('statsPlayerPicker')) $('statsPlayerPicker').addEventListener('click', e=>{ const btn=e.target.closest('[data-player-name]'); if(btn){ $('statsPlayerSearch').value = btn.dataset.playerName; renderStats(); }});
+  if($('finePlayerSearch')) $('finePlayerSearch').addEventListener('input', renderFines);
+  if($('finePlayerSelect')) $('finePlayerSelect').addEventListener('change', renderFines);
+  if($('finePlayerSort')) $('finePlayerSort').addEventListener('change', renderFines);
   document.body.addEventListener('click', e=>{
     const pick=e.target.closest('.pick'); if(pick) setPrediction(pick.dataset.mid, pick.dataset.pick);
     const detail=e.target.closest('[data-player-detail]'); if(detail){ selectedResultPlayer = selectedResultPlayer===detail.dataset.playerDetail ? '' : detail.dataset.playerDetail; renderFines(); return; }
   });
   $('btnLoadCloud').onclick=loadCloud; $('btnLoadCloud2').onclick=loadCloud;
   $('btnSaveCloud').onclick=saveCloud; $('btnSaveCloud2').onclick=saveCloud;
-  $('btnPrint').onclick=()=>window.print();
   if($('btnSubmitPredictions')) $('btnSubmitPredictions').onclick=submitPredictions;
   if($('btnClearDraft')) $('btnClearDraft').onclick=clearDrafts;
   if($('btnDeletePrediction')) $('btnDeletePrediction').onclick=deletePlayerPredictions;
