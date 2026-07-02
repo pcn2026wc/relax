@@ -274,7 +274,7 @@
           <button class="btn" id="btnAdminLogout">Khóa QTV</button>
         </div>
         <div class="okbox admin-only">Đã mở QTV. Có thể nhập kết quả, đổi cấu hình cloud, export/import và reset dữ liệu.</div>
-        <div class="notice admin-only">Cloud đã được cấu hình bằng Apps Script Web App. Google Sheet đang dùng có ID <span class="code">1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ</span>. Khi người chơi bấm <b>Gửi dự đoán</b>, hệ thống sẽ tự lưu Cloud và đẩy dữ liệu sang sheet ngày.</div>
+        <div class="notice admin-only">Google Sheet chính có ID <span class="code">1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ</span>. URL Apps Script mặc định hiện là Cloud cũ để khôi phục dữ liệu; cần deploy file <span class="code">google_apps_script_Code.gs</span> và bấm <b>Test Apps Script</b> đến khi báo đúng Sheet ID trước khi đẩy dữ liệu.</div>
         <div class="toolbar admin-only">
           <div class="field"><label>Google Sheet URL</label><input id="googleSheetUrl" placeholder="https://docs.google.com/spreadsheets/d/.../edit" /></div>
           <div class="field"><label>Apps Script Web App URL</label><input id="cloudUrl" placeholder="https://script.google.com/macros/s/.../exec" /></div>
@@ -342,7 +342,12 @@
 const STORAGE_KEY = 'wc2026_predict_state_v1_20260701';
 const GOOGLE_SHEET_ID = '1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ';
 const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ/edit';
-const CLOUD_URL_DEFAULT = 'https://script.google.com/macros/s/AKfycbw-1RyCo8haPKfP5UJ514cXvPj50cDChMReNM45hHMOWJPTq2QsiiPU1BtnJPsyEQ/exec';
+const LEGACY_CLOUD_URL = 'https://script.google.com/macros/s/AKfycbw-1RyCo8haPKfP5UJ514cXvPj50cDChMReNM45hHMOWJPTq2QsiiPU1BtnJPsyEQ/exec';
+const CLOUD_URL_DEFAULT = LEGACY_CLOUD_URL;
+const OBSOLETE_GOOGLE_SHEET_IDS = new Set([
+  '12slxyRcBbiTSXYg3SMU0KzblYfEplREiPgPDIkof1uU',
+  '1mNmHKXb6ICA7m3hK8B6S1vu1GpBcMbRWVq3ODeLkYsc'
+]);
 const ADMIN_PASSWORD_SHA256 = 'e6121f114d1b02a340a2f495504c92feb62a13590a161c25f282d1845aa600ad';
 const FINE_AMOUNT = 20000;
 const MAX_SUBMISSIONS = 5;
@@ -448,9 +453,21 @@ function isPredictionValidForScoring(match, record){
   return new Date(submittedAt).getTime() <= new Date(match.kickoff).getTime() - PREDICTION_CUTOFF_MINUTES * 60000;
 }
 function cloudUrl(){ return localStorage.getItem('wc2026_cloud_url') || CLOUD_URL_DEFAULT || ''; }
-function googleSheetUrl(){ return localStorage.getItem('wc2026_google_sheet_url') || GOOGLE_SHEET_URL; }
+function sheetIdFromUrl(url){ return String(url || '').match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/)?.[1] || ''; }
+function googleSheetUrl(){
+  const saved=localStorage.getItem('wc2026_google_sheet_url') || '';
+  const savedId=sheetIdFromUrl(saved);
+  if(saved && (!savedId || OBSOLETE_GOOGLE_SHEET_IDS.has(savedId))){
+    localStorage.removeItem('wc2026_google_sheet_url');
+    return GOOGLE_SHEET_URL;
+  }
+  return saved || GOOGLE_SHEET_URL;
+}
 function validGoogleSheetUrl(url){ return /^https:\/\/docs\.google\.com\/spreadsheets\/d\/[a-zA-Z0-9_-]+(?:\/|$)/.test(String(url || '').trim()); }
-function googleSheetId(){ return String(googleSheetUrl()).match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/)?.[1] || GOOGLE_SHEET_ID; }
+function googleSheetId(){
+  const id=sheetIdFromUrl(googleSheetUrl());
+  return id && !OBSOLETE_GOOGLE_SHEET_IDS.has(id) ? id : GOOGLE_SHEET_ID;
+}
 async function sha256(value){
   const bytes = new TextEncoder().encode(value);
   const hash = await crypto.subtle.digest('SHA-256', bytes);
@@ -518,7 +535,7 @@ function mergeState(remote){
 function render(){
   document.body.classList.toggle('admin', isAdmin);
   $('clockPill').textContent = 'Giờ VN: ' + nowVN();
-  $('cloudPill').textContent = cloudUrl() ? 'Cloud: đã cấu hình' : 'Cloud: chưa cấu hình';
+  $('cloudPill').textContent = !cloudUrl() ? 'Cloud: chưa cấu hình' : cloudUrl()===LEGACY_CLOUD_URL ? 'Cloud: dữ liệu cũ' : 'Cloud: đã cấu hình';
   renderPlayers(); renderDateFilter(); renderKpis(); renderMatches(); renderStats(); renderFines(); renderResults(); renderAdminFields();
 }
 function getSelectedPlayer(){ return ($('playerSelect')?.value || '').trim(); }
@@ -975,28 +992,15 @@ function clearResult(mid){
   audit('clear_result', mid);
   saveLocal(); render(); toast('Đã xóa kết quả ' + mid);
 }
-function loadOnlineResults(){
-  const url=cloudUrl(); if(!url){ toast('Chưa có Apps Script URL. Vào QTV để dán link /exec trước.'); return; }
-  const cb='wcResultsCb_' + Date.now();
-  window[cb] = (data) => {
-    try{
-      if(!data || data.ok===false) throw new Error(data?.error || 'Apps Script không trả dữ liệu hợp lệ');
-      const remoteState = data.state || {};
-      const remoteResults = remoteState.results || {};
-      mergeState(remoteState);
-      state.results = remoteResults;
-      saveLocal();
-      const imported = Number(data.imported || 0);
-      log('Import KQ_TranDau: ' + JSON.stringify(data.report || [], null, 2));
-      toast(`Đã lấy ${imported} kết quả từ sheet KQ_TranDau.`);
-      render();
-    }catch(e){ toast('Lỗi lấy kết quả: ' + (e.message || e), 6000); }
-    finally{ delete window[cb]; script.remove(); }
-  };
-  const script=document.createElement('script');
-  script.onerror=()=>{ delete window[cb]; script.remove(); toast('Không gọi được Apps Script action=syncresults.', 6000); };
-  script.src = url + (url.includes('?')?'&':'?') + 'action=syncresults&callback=' + encodeURIComponent(cb) + '&t=' + Date.now();
-  document.body.appendChild(script);
+async function loadOnlineResults(){
+  try{
+    const imported=await importDirectResultsFromSheet();
+    audit('direct_sheet_results', `KQ_TranDau: ${imported} kết quả`); saveLocal(); render();
+    toast(`Đã lấy trực tiếp ${imported} kết quả từ sheet KQ_TranDau.`, 6000);
+    if(cloudUrl()) await saveCloud({successMessage:`Đã lấy ${imported} kết quả từ Google Sheet và lưu Cloud.`});
+  }catch(e){
+    toast('Lỗi đọc trực tiếp sheet KQ_TranDau: ' + (e.message || e), 7000);
+  }
 }
 
 async function clearResultsByDate(){
@@ -1131,6 +1135,114 @@ function postByHiddenForm(url, payload, action=''){
   if(action){ const actionInput=document.createElement('input'); actionInput.type='hidden'; actionInput.name='action'; actionInput.value=action; form.appendChild(actionInput); }
   document.body.appendChild(form); form.submit(); setTimeout(()=>form.remove(), 2000);
 }
+function readGoogleSheetTable(sheetName){
+  return new Promise((resolve,reject)=>{
+    const id=googleSheetId();
+    if(!id){ reject(new Error('Chưa có Google Sheet ID')); return; }
+    const cb='wcSheetCb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    const script=document.createElement('script');
+    let timer;
+    const finish=(error,data)=>{
+      clearTimeout(timer);
+      try{ delete window[cb]; }catch(e){}
+      script.remove();
+      error ? reject(error) : resolve(data?.table || null);
+    };
+    window[cb]=data=>{
+      if(!data || data.status==='error') finish(new Error(data?.errors?.[0]?.detailed_message || `Không đọc được sheet ${sheetName}`));
+      else finish(null,data);
+    };
+    script.onerror=()=>finish(new Error(`Không tải được sheet ${sheetName}`));
+    timer=setTimeout(()=>finish(new Error(`Hết thời gian chờ sheet ${sheetName}`)),12000);
+    const tqx=encodeURIComponent('out:json;responseHandler:'+cb);
+    script.src=`https://docs.google.com/spreadsheets/d/${encodeURIComponent(id)}/gviz/tq?tqx=${tqx}&sheet=${encodeURIComponent(sheetName)}&t=${Date.now()}`;
+    document.body.appendChild(script);
+  });
+}
+function sheetCell(row,index){
+  const cell=row?.c?.[index];
+  return cell ? (cell.f ?? cell.v ?? '') : '';
+}
+function normalizeSheetText(value){
+  return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').trim().toLowerCase();
+}
+function sheetChoice(value,match){
+  const text=normalizeSheetText(value);
+  if(!text) return '';
+  if(text==='hoa' || text.includes(' hoa')) return 'D';
+  if(text.includes(normalizeSheetText(match.home)) && text.includes('thang')) return 'H';
+  if(text.includes(normalizeSheetText(match.away)) && text.includes('thang')) return 'A';
+  return '';
+}
+function sheetSubmittedAt(value){
+  const match=String(value || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+  if(!match) return new Date().toISOString();
+  const [,day,month,year,hour,minute,second='00']=match;
+  return new Date(`${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}T${hour.padStart(2,'0')}:${minute}:${second}+07:00`).toISOString();
+}
+async function importDirectPredictionsFromSheet(days=getStatsDateRange('current5')){
+  const attempts=await Promise.all(days.map(async day=>{
+    try{ return {day,table:await readGoogleSheetTable(displayDay(day))}; }
+    catch(e){ console.warn(`Không đọc được sheet ${displayDay(day)}`,e); return null; }
+  }));
+  const tables=attempts.filter(Boolean);
+  if(!tables.length) throw new Error('Không đọc được tab ngày nào trong Google Sheet');
+  let records=0;
+  const players=new Set();
+  tables.forEach(({day,table})=>{
+    if(!table) return;
+    const labels=(table.cols || []).map(col=>String(col.label || ''));
+    const playerCol=labels.findIndex(label=>normalizeSheetText(label)==='nguoi choi');
+    const timeCol=labels.findIndex(label=>normalizeSheetText(label)==='gio du doan');
+    const matches=MATCHES.filter(match=>matchDayKey(match)===day);
+    (table.rows || []).forEach(row=>{
+      const player=String(sheetCell(row,playerCol) || '').trim();
+      if(!player || !PLAYERS.some(item=>item.name===player)) return;
+      const submittedAt=sheetSubmittedAt(sheetCell(row,timeCol));
+      matches.forEach(match=>{
+        const col=labels.findIndex(label=>label.startsWith(match.id));
+        const choice=col>=0 ? sheetChoice(sheetCell(row,col),match) : '';
+        if(!choice) return;
+        state.predictions[match.id]=state.predictions[match.id] || {};
+        const old=state.predictions[match.id][player];
+        if(!old || new Date(submittedAt)>=new Date(old.updatedAt || 0)){
+          state.predictions[match.id][player]={
+            choice,
+            updatedAt:submittedAt,
+            submittedAt,
+            submitCount:Number(old?.submitCount || old?.history?.length || 1),
+            history:Array.isArray(old?.history) && old.history.length ? old.history : [{choice,updatedAt:submittedAt,submittedAt}]
+          };
+        }
+        records++;
+        players.add(player);
+      });
+    });
+  });
+  saveLocal(); render();
+  return {records,players:players.size,days:tables.length};
+}
+async function importDirectResultsFromSheet(){
+  const table=await readGoogleSheetTable('KQ_TranDau');
+  const labels=(table?.cols || []).map(col=>normalizeSheetText(col.label || ''));
+  const matchCol=labels.indexOf('ma tran');
+  const homeCol=labels.indexOf('ban doi 1');
+  const awayCol=labels.indexOf('ban doi 2');
+  const statusCol=labels.indexOf('trang thai');
+  let imported=0;
+  (table?.rows || []).forEach(row=>{
+    const matchId=String(sheetCell(row,matchCol) || '').trim();
+    if(!MATCHES.some(match=>match.id===matchId)) return;
+    const status=normalizeSheetText(sheetCell(row,statusCol));
+    if(status==='xoa' || status==='clear'){ delete state.results[matchId]; return; }
+    const homeScore=Number(sheetCell(row,homeCol));
+    const awayScore=Number(sheetCell(row,awayCol));
+    if(!Number.isFinite(homeScore) || !Number.isFinite(awayScore) || sheetCell(row,homeCol)==='' || sheetCell(row,awayCol)==='') return;
+    state.results[matchId]={homeScore,awayScore,result:homeScore>awayScore?'H':homeScore<awayScore?'A':'D',status:'done',updatedAt:new Date().toISOString()};
+    imported++;
+  });
+  return imported;
+}
 function readCloudState(url){
   return new Promise(resolve=>{
     if(!url){ resolve(null); return; }
@@ -1169,14 +1281,17 @@ async function loadCloud(){
     mergeState(data.state || data);
     loaded++;
   });
-  if(!loaded){ toast('Không tải được Cloud. Kiểm tra Apps Script URL và quyền Anyone.', 6000); return; }
+  let direct={records:0,players:0,days:0};
+  try{ direct=await importDirectPredictionsFromSheet(getStatsDateRange('current5')); }
+  catch(e){ console.warn('Không đọc được dự đoán trực tiếp từ Google Sheet',e); }
+  if(!loaded && !direct.records){ toast('Không tải được cả Cloud lẫn Google Sheet. Kiểm tra link và quyền truy cập.', 7000); return; }
   cleanupTestResults20260701('cloud');
-  audit('cloud_load', `Đã gộp ${loaded}/${urls.length} nguồn Cloud`); saveLocal(); render();
+  audit('cloud_load', `Đã gộp ${loaded}/${urls.length} Cloud và ${direct.records} ô dự đoán trực tiếp`); saveLocal(); render();
   const tienThang=playerCloudSummary('Nguyễn Tiến Thắng');
-  if(urls.length > 1 && responses[1]){
-    await saveCloud({successMessage:`Đã khôi phục Cloud cũ sang Cloud mới. Tiến Thắng có ${tienThang.matches} trận, tối đa ${tienThang.maxSubmit}/${MAX_SUBMISSIONS} lần.`});
+  if(loaded && urls.length > 1 && responses[1]){
+    await saveCloud({successMessage:`Đã gộp Cloud và Google Sheet (${direct.players} người). Tiến Thắng có ${tienThang.matches} trận, tối đa ${tienThang.maxSubmit}/${MAX_SUBMISSIONS} lần.`});
   }else{
-    toast(`Đã lấy Cloud. Tiến Thắng có ${tienThang.matches} trận, tối đa ${tienThang.maxSubmit}/${MAX_SUBMISSIONS} lần.`, 6500);
+    toast(`Đã lấy Cloud và Google Sheet (${direct.players} người). Tiến Thắng có ${tienThang.matches} trận, tối đa ${tienThang.maxSubmit}/${MAX_SUBMISSIONS} lần.`, 6500);
   }
 }
 function readCloudInfo(url=cloudUrl()){
@@ -1216,26 +1331,13 @@ function testGoogleSheet(){
   toast('Đã mở Google Sheet để kiểm tra quyền truy cập.');
 }
 
-function importDailySheets(options={}){
-  const url=cloudUrl(); if(!url){ toast('Chưa có Apps Script URL. Deploy Apps Script rồi dán link /exec trước.'); return; }
-  const bootstrapPayload = JSON.stringify(getCloudPayload());
-  try{ postByHiddenForm(url, bootstrapPayload, 'save'); }catch(e){ console.warn(e); }
-  const cb='wcImportDaysCb_' + Date.now();
-  window[cb] = (data) => {
-    try{
-      if(!data || data.ok===false) throw new Error(data?.error || 'Apps Script không trả dữ liệu hợp lệ');
-      mergeState(data.state || {});
-      const total = (data.report || []).reduce((s,r)=>s + Number(r.imported || 0), 0);
-      log('Import sheet ngày: ' + JSON.stringify(data.report || [], null, 2));
-      if(!options.silent) toast('Đã kéo dự đoán từ các sheet ngày: ' + total + ' lượt chọn.');
-      render();
-    }catch(e){ toast('Lỗi kéo sheet ngày: ' + (e.message || e), 6000); }
-    finally{ delete window[cb]; script.remove(); }
-  };
-  const script=document.createElement('script');
-  script.onerror=()=>{ delete window[cb]; script.remove(); toast('Không gọi được Apps Script action=syncdays.', 6000); };
-  script.src = url + (url.includes('?')?'&':'?') + 'action=syncdays&callback=' + encodeURIComponent(cb) + '&t=' + Date.now();
-  setTimeout(()=>document.body.appendChild(script), options.bootstrapDelay || 1400);
+async function importDailySheets(options={}){
+  try{
+    const summary=await importDirectPredictionsFromSheet(getStatsDateRange('current5'));
+    audit('direct_sheet_predictions', `${summary.players} người · ${summary.records} ô · ${summary.days} ngày`); saveLocal(); render();
+    if(!options.silent) toast(`Đã kéo trực tiếp dự đoán từ Google Sheet: ${summary.players} người, ${summary.records} ô lựa chọn.`, 6500);
+    if(cloudUrl()) await saveCloud({successMessage:`Đã đồng bộ ${summary.players} người từ Google Sheet và lưu Cloud.`});
+  }catch(e){ toast('Lỗi kéo trực tiếp các sheet ngày: ' + (e.message || e), 7000); }
 }
 async function exportDailySheets(){
   if(!isAdmin){ toast('Cần mở QTV để đẩy dữ liệu ra sheet ngày.'); return; }
@@ -1334,6 +1436,7 @@ function bind(){
     const sheetUrl = $('googleSheetUrl').value.trim();
     const scriptUrl = $('cloudUrl').value.trim();
     if(!validGoogleSheetUrl(sheetUrl)){ toast('Link Google Sheet không hợp lệ.'); return; }
+    if(OBSOLETE_GOOGLE_SHEET_IDS.has(sheetIdFromUrl(sheetUrl))){ toast('Đây là Google Sheet cũ. Hãy dùng Sheet ID ' + GOOGLE_SHEET_ID + '.'); return; }
     if(scriptUrl && !/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec(?:\?|$)/.test(scriptUrl)){ toast('Link Apps Script phải là Web App URL kết thúc bằng /exec.'); return; }
     localStorage.setItem('wc2026_google_sheet_url', sheetUrl);
     localStorage.setItem('wc2026_cloud_url', scriptUrl);
