@@ -249,7 +249,7 @@
 <body>
   <div class="hero">
     <div class="hero-inner">
-      <div class="title"><div class="logo">⚽</div><div><h1>Portal dự đoán kết quả World Cup 2026 - P.CN</h1><p><b>Thể lệ:</b> Người chơi dự đoán kết quả <b>Thắng/Hòa/Thua</b>. Thua đóng góp <b>50k/trận</b></p></div></div>
+      <div class="title"><div class="logo">⚽</div><div><h1>Portal dự đoán kết quả World Cup 2026 - P.CN</h1><p><b>Thể lệ:</b> Người chơi dự đoán kết quả <b>Thắng/Hòa/Thua</b>. Sai đóng góp <b>50k/trận</b>; từ <b>15/7</b> trở đi <b>100k/trận</b></p></div></div>
       <div class="chips"><span class="pill" id="clockPill">Giờ VN: --</span><span class="pill" id="cloudPill">Cloud: chưa cấu hình</span><button class="pill hero-admin-tab tab" type="button" data-tab="admin">🔐 QTV</button></div>
     </div>
   </div>
@@ -383,6 +383,8 @@ const OBSOLETE_GOOGLE_SHEET_IDS = new Set([
 ]);
 const ADMIN_PASSWORD_SHA256 = 'e6121f114d1b02a340a2f495504c92feb62a13590a161c25f282d1845aa600ad';
 const FINE_AMOUNT = 50000;
+const FINE_AMOUNT_FROM_15_7 = 100000;
+const FINE_INCREASE_FROM_DAY = '2026-07-15';
 const MAX_SUBMISSIONS = 5;
 const PREDICTION_CUTOFF_MINUTES = 5;
 const TZ_LABEL = 'Asia/Bangkok / Việt Nam';
@@ -510,6 +512,8 @@ function normalizeMatchId(value){ const raw=String(value || '').trim().toUpperCa
 function money(n){ return (n||0).toLocaleString('vi-VN') + 'đ'; }
 function dateKey(iso){ return new Date(iso).toLocaleDateString('sv-SE', {timeZone:'Asia/Bangkok'}); }
 function matchDayKey(m){ return m.day || dateKey(m.kickoff); }
+function fineAmountForMatch(m){ return matchDayKey(m) >= FINE_INCREASE_FROM_DAY ? FINE_AMOUNT_FROM_15_7 : FINE_AMOUNT; }
+function fineRuleLabel(){ return `${money(FINE_AMOUNT)} trước 15/7 · ${money(FINE_AMOUNT_FROM_15_7)} từ 15/7`; }
 function displayDay(d){ return d && d !== 'all' ? d.split('-').reverse().slice(0,2).join('/') : 'đang chọn'; }
 function vnDate(iso){ return new Date(iso).toLocaleString('vi-VN', {timeZone:'Asia/Bangkok', hour:'2-digit', minute:'2-digit', day:'2-digit', month:'2-digit', year:'numeric'}); }
 function nowVN(){ return new Date().toLocaleString('vi-VN', {timeZone:'Asia/Bangkok', hour12:false, weekday:'short', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit'}); }
@@ -676,6 +680,7 @@ function fineRows(){
     const res = state.results[m.id];
     if(!res || res.status!=='done') continue;
     const dk = matchDayKey(m);
+    const fineAmount = fineAmountForMatch(m);
     for(const p of PLAYERS){
       const r = map[p.name];
       r.byDay[dk] = r.byDay[dk] || {wrong:0, missing:0, correct:0, total:0};
@@ -683,11 +688,11 @@ function fineRows(){
       const pred = isPredictionValidForScoring(m, rec) ? rec.choice : '';
       if(!pred){
         r.missing++; r.byDay[dk].missing++;
-        if(state.settings.missingPenalty){ r.total += FINE_AMOUNT; r.byDay[dk].total += FINE_AMOUNT; }
+        if(state.settings.missingPenalty){ r.total += fineAmount; r.byDay[dk].total += fineAmount; }
       }else if(pred === res.result){
         r.correct++; r.byDay[dk].correct++;
       }else{
-        r.wrong++; r.total += FINE_AMOUNT; r.byDay[dk].wrong++; r.byDay[dk].total += FINE_AMOUNT;
+        r.wrong++; r.total += fineAmount; r.byDay[dk].wrong++; r.byDay[dk].total += fineAmount;
       }
     }
   }
@@ -753,6 +758,7 @@ function matchDistribution(m){
 function buildResultsSheetRows(){
   return MATCHES.filter(m=>resultStatus(m)).map(m=>{
     const res = state.results[m.id];
+    const fineAmount = fineAmountForMatch(m);
     let correct=0, wrong=0, missing=0;
     PLAYERS.forEach(p=>{
       const rec = state.predictions[m.id]?.[p.name];
@@ -761,7 +767,7 @@ function buildResultsSheetRows(){
       else if(pred===res.result) correct++;
       else wrong++;
     });
-    return {matchId:m.id, date:matchDayKey(m), home:m.home, away:m.away, homeScore:res.homeScore, awayScore:res.awayScore, result:choiceLabel(res.result,m), correct, wrong, missing, totalPenalty:(wrong+missing)*FINE_AMOUNT};
+    return {matchId:m.id, date:matchDayKey(m), home:m.home, away:m.away, homeScore:res.homeScore, awayScore:res.awayScore, result:choiceLabel(res.result,m), correct, wrong, missing, totalPenalty:(wrong + (state.settings.missingPenalty ? missing : 0)) * fineAmount};
   });
 }
 function buildThongKeDuDoanRows(mode='current5'){
@@ -833,12 +839,13 @@ function renderStats(){
     const choiceBreakdown = renderStatsChoiceBreakdown(ms, playerList);
     const matchPenaltyTotals = ms.map(m=>{
       let total=0;
+      const fineAmount = fineAmountForMatch(m);
       playerList.forEach(p=>{
         const rec = state.predictions[m.id]?.[p.name];
         const pred = isPredictionValidForScoring(m, rec) ? rec.choice : '';
         const res = state.results[m.id];
-        if(pred && res?.status==='done' && pred !== res.result) total += FINE_AMOUNT;
-        else if(!pred && res?.status==='done') total += FINE_AMOUNT;
+        if(pred && res?.status==='done' && pred !== res.result) total += fineAmount;
+        else if(!pred && res?.status==='done' && state.settings.missingPenalty) total += fineAmount;
       });
       return total;
     });
@@ -851,10 +858,14 @@ function renderStats(){
         let content = rec?.choice && !pred ? '<b>' + escapeHtml(choiceLabel(rec.choice,m)) + '</b><br><span class="status-pill bad">Bỏ phiếu muộn</span>' : '<span class="status-pill warn">Chưa dự đoán</span>';
         let penalty = 0;
         if(pred){
+          const fineAmount = fineAmountForMatch(m);
           const pickText = '<b>' + escapeHtml(choiceLabel(pred,m)) + '</b>';
           if(!res || res.status !== 'done') content = pickText + '<br><span class="status-pill warn">Đã dự đoán</span>';
           else if(pred === res.result) content = pickText + '<br><span class="status-pill ok">Đúng</span>';
-          else { content = pickText + '<br><span class="status-pill bad">Sai · ' + money(FINE_AMOUNT) + '</span>'; penalty = FINE_AMOUNT; }
+          else { content = pickText + '<br><span class="status-pill bad">Sai · ' + money(fineAmount) + '</span>'; penalty = fineAmount; }
+        }else if(res?.status === 'done' && state.settings.missingPenalty){
+          penalty = fineAmountForMatch(m);
+          content += '<br><span class="status-pill bad">' + money(penalty) + '</span>';
         }
         return {content, penalty};
       });
@@ -902,10 +913,11 @@ function detailForPlayer(player){
     const rec=state.predictions[m.id]?.[player];
     const pred=isPredictionValidForScoring(m, rec) ? rec.choice : '';
     const res=state.results[m.id];
+    const fineAmount = fineAmountForMatch(m);
     let status, fine=0;
-    if(!pred){ status=rec?.choice ? 'Muộn' : 'Thiếu'; fine=state.settings.missingPenalty ? FINE_AMOUNT : 0; }
+    if(!pred){ status=rec?.choice ? 'Muộn' : 'Thiếu'; fine=state.settings.missingPenalty ? fineAmount : 0; }
     else if(pred===res.result){ status='Đúng'; }
-    else { status='Sai'; fine=FINE_AMOUNT; }
+    else { status='Sai'; fine=fineAmount; }
     return {m,pred,res,status,fine};
   });
 }
@@ -934,7 +946,7 @@ function renderFines(){
   const topBad = [...allRows].sort((a,b)=>b.wrong-a.wrong || a.correct-b.correct || a.total-b.total).slice(0,5);
   const goldList = topGold.map((r,i)=>`<li class="rank-item ${i===0?'top1':''}"><div class="rank-pos">${i+1}</div><div class="rank-info"><div class="rank-main"><strong>${escapeHtml(r.name)}</strong><b class="rank-money">${money(r.total)}</b></div><span>${r.correct} đúng · ${r.wrong} sai</span></div><div class="rank-score">${r.correct}✓</div></li>`).join('');
   const badList = topBad.map((r,i)=>`<li class="rank-item ${i===0?'top1':''}"><div class="rank-pos">${i+1}</div><div class="rank-info"><div class="rank-main"><strong>${escapeHtml(r.name)}</strong><b class="rank-money">${money(r.total)}</b></div><span>${r.wrong} sai · ${r.correct} đúng</span></div><div class="rank-score">${r.wrong}✕</div></li>`).join('');
-  $('fineTables').innerHTML = `<div class="kpi-row"><div class="card pad stat"><span>Tổng đóng góp</span><b>${money(total)}</b><p class="small">${doneMatches().length} trận đã nhập kết quả</p></div><div class="card pad stat"><span>Mức đóng góp</span><b>${money(FINE_AMOUNT)}</b><p class="small">/ trận sai</p></div><div class="card pad stat"><span>Tỷ lệ đúng</span><b>${overallResultRate()}</b><p class="small">Tính trên các dự đoán đã có kết quả</p></div></div>
+  $('fineTables').innerHTML = `<div class="kpi-row"><div class="card pad stat"><span>Tổng đóng góp</span><b>${money(total)}</b><p class="small">${doneMatches().length} trận đã nhập kết quả</p></div><div class="card pad stat"><span>Mức đóng góp</span><b>${fineRuleLabel()}</b><p class="small">/ trận sai</p></div><div class="card pad stat"><span>Tỷ lệ đúng</span><b>${overallResultRate()}</b><p class="small">Tính trên các dự đoán đã có kết quả</p></div></div>
   <div class="rank-grid"><div class="rank-card good"><h4><span class="rank-icon">🏅</span>Top 5 Tinh Hoa Tiết Kiệm</h4><ul class="rank-list">${goldList || '<li class="rank-item"><div class="rank-info"><strong>Chưa có dữ liệu</strong><span>Hãy đợi kết quả trận đầu tiên</span></div></li>'}</ul></div><div class="rank-card bad"><h4><span class="rank-icon">⚠️</span>Top 5 Người Góp Phần Làm Nên Điều Kỳ Diệu</h4><ul class="rank-list">${badList || '<li class="rank-item"><div class="rank-info"><strong>Chưa có dữ liệu</strong><span>Hãy đợi kết quả trận đầu tiên</span></div></li>'}</ul></div></div>`;
   $('finePlayerTable').innerHTML = `<div style="overflow:auto"><table><thead><tr><th>STT</th><th>Người chơi</th><th class="center">Đúng</th><th class="center">Sai</th><th class="center">Thiếu</th><th class="center">Tỷ lệ đúng</th><th class="right">Tổng đóng góp</th></tr></thead><tbody>${body || '<tr><td colspan="7" class="center">Không tìm thấy người chơi.</td></tr>'}</tbody></table></div>`;
 }
