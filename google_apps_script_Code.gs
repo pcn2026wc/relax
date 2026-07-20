@@ -1,7 +1,8 @@
 const SPREADSHEET_ID = '1U4Q-6syclM8Qe2eSp4jBAfCqQFyiXbFUpApA8R7s5gQ';
 const STATE_KEY = 'wc2026_state_json';
 const TZ = 'Asia/Bangkok';
-const FINE_AMOUNT = 20000;
+const FINE_AMOUNT = 50000;
+const FINAL_FINE_AMOUNT = 100000;
 const PREDICTION_CUTOFF_MINUTES = 5;
 
 function doGet(e) {
@@ -9,9 +10,10 @@ function doGet(e) {
   const callback = e.parameter.callback;
   let data;
   try {
-    if (action === 'ping') data = { ok: true, updatedAt: new Date().toISOString() };
+    if (action === 'ping') data = { ok: true, spreadsheetId: SPREADSHEET_ID, updatedAt: new Date().toISOString() };
     else if (action === 'syncdays') data = importDailySheets_();
     else if (action === 'syncresults') data = importResultsSheet_();
+    else if (action === 'restoreresults') data = restoreResultsSheetFromState_();
     else if (action === 'clearresultsday') data = clearResultsDay_(String(e.parameter.day || ''));
     else data = loadState_();
   } catch (err) {
@@ -52,8 +54,10 @@ function loadState_() {
 function saveState_(state) {
   const data = { ok: true, type: 'wc2026-predict-state', savedAt: new Date().toISOString(), state: state || {} };
   PropertiesService.getScriptProperties().setProperty(STATE_KEY, JSON.stringify(data));
-  ensureResultsSheet_(state || {});
-  writeSummarySheets_(state || {});
+  if (state && state.matches && state.matches.length) {
+    ensureResultsSheet_(state);
+    writeSummarySheets_(state);
+  }
   return data;
 }
 
@@ -124,16 +128,18 @@ function importResultsSheet_() {
     const status = String(row[7] || '').trim().toLowerCase();
     if (homeScore === null || awayScore === null) return;
     const result = resultOfScore_(homeScore, awayScore);
+    const advanceResult = resultFromWinnerCell_(row[9], match) || (result === 'D' ? '' : result);
     state.results[matchId] = {
       homeScore: homeScore,
       awayScore: awayScore,
       result: result,
+      advanceResult: advanceResult,
       status: status === 'xoa' || status === 'clear' ? '' : 'done',
       updatedAt: new Date().toISOString()
     };
     if (!state.results[matchId].status) delete state.results[matchId];
     else imported++;
-    report.push({ match: matchId, score: homeScore + '-' + awayScore, result: result });
+    report.push({ match: matchId, score: homeScore + '-' + awayScore, result: advanceResult || result });
   });
   saveState_(state);
   return { ok: true, state: state, imported: imported, report: report };
@@ -154,8 +160,8 @@ function clearResultsDay_(dayKey) {
     const matchId = String(row[0] || '').trim();
     const day = String(row[1] || '').trim();
     if (day !== dayKey) return;
-    const hadSheetResult = row[5] !== '' || row[6] !== '' || row[7] !== '' || row[8] !== '';
-    sh.getRange(idx + 2, 6, 1, 4).clearContent();
+    const hadSheetResult = row[5] !== '' || row[6] !== '' || row[7] !== '' || row[8] !== '' || row[9] !== '';
+    sh.getRange(idx + 2, 6, 1, 5).clearContent();
     if (state.results[matchId]) {
       delete state.results[matchId];
     }
@@ -169,7 +175,8 @@ function clearResultsDay_(dayKey) {
 function ensureResultsSheet_(state) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sh = getOrCreateSheet_(ss, 'KQ_TranDau');
-  const header = ['Ma tran', 'Ngay', 'Doi 1', 'Doi 2', 'Gio VN', 'Ban doi 1', 'Ban doi 2', 'Trang thai', 'Ket qua'];
+  if (!state || !state.matches || !state.matches.length) return sh;
+  const header = ['Ma tran', 'Ngay', 'Doi 1', 'Doi 2', 'Gio VN', 'Ban doi 1', 'Ban doi 2', 'Trang thai', 'Ket qua 90p', 'Doi thang'];
   const existing = {};
   const values = sh.getDataRange().getValues();
   if (values.length > 1) {
@@ -181,19 +188,34 @@ function ensureResultsSheet_(state) {
   const rows = [header];
   (state.matches || []).forEach(function(m) {
     const old = existing[m.id] || [];
-    const homeScore = old[5] !== undefined ? old[5] : '';
-    const awayScore = old[6] !== undefined ? old[6] : '';
-    const status = old[7] || '';
+    const displayHome = resolveBracketSlotForSheet_(m.homeSlot || m.home, state);
+    const displayAway = resolveBracketSlotForSheet_(m.awaySlot || m.away, state);
+    const savedResult = state.results && state.results[m.id] && state.results[m.id].status === 'done' ? state.results[m.id] : null;
+    const homeScore = old[5] !== undefined && old[5] !== '' ? old[5] : (savedResult ? savedResult.homeScore : '');
+    const awayScore = old[6] !== undefined && old[6] !== '' ? old[6] : (savedResult ? savedResult.awayScore : '');
+    const status = old[7] || (savedResult ? 'done' : '');
+    const winner = old[9] !== undefined && old[9] !== '' ? old[9] : (savedResult && savedResult.advanceResult ? resultSheetChoiceLabel_(savedResult.advanceResult, m) : '');
     const resultText = homeScore !== '' && awayScore !== '' && !isNaN(Number(homeScore)) && !isNaN(Number(awayScore))
-      ? choiceLabel_(resultOfScore_(Number(homeScore), Number(awayScore)), m)
+      ? resultSheetChoiceLabel_(resultOfScore_(Number(homeScore), Number(awayScore)), m)
       : '';
-    rows.push([m.id, m.day || dateKey_(m.kickoff), m.home, m.away, Utilities.formatDate(new Date(m.kickoff), TZ, 'HH:mm dd/MM/yyyy'), homeScore, awayScore, status, resultText]);
+    rows.push([m.id, m.day || dateKey_(m.kickoff), displayHome, displayAway, Utilities.formatDate(new Date(m.kickoff), TZ, 'HH:mm dd/MM/yyyy'), homeScore, awayScore, status, resultText, winner]);
   });
   clearSheet_(sh);
   sh.getRange(1, 1, rows.length, header.length).setValues(rows);
   sh.setFrozenRows(1);
   sh.autoResizeColumns(1, header.length);
   return sh;
+}
+
+function restoreResultsSheetFromState_() {
+  const saved = loadState_();
+  const state = saved.state || saved;
+  if (!state.matches || !state.matches.length) return { ok: false, error: 'Không có state.matches để dựng lại KQ_TranDau' };
+  const count = state.results ? Object.keys(state.results).filter(function(id) {
+    return state.results[id] && state.results[id].status === 'done';
+  }).length : 0;
+  ensureResultsSheet_(state);
+  return { ok: true, restored: count, state: state };
 }
 
 function importDailySheets_() {
@@ -288,6 +310,8 @@ function buildSummaryData_(state) {
     return results[m.id] && results[m.id].status === 'done';
   }).forEach(function(m) {
     const res = results[m.id];
+    const scoringResult = scoringResultForMatch_(m, res);
+    const fineAmount = fineAmountForMatch_(m, matches);
     let correct = 0;
     let wrong = 0;
     let missing = 0;
@@ -295,10 +319,10 @@ function buildSummaryData_(state) {
       const rec = predictions[m.id] && predictions[m.id][p.name] ? predictions[m.id][p.name] : null;
       const pred = isPredictionValidForScoring_(m, rec) ? rec.choice : '';
       if (!pred) missing++;
-      else if (pred === res.result) correct++;
+      else if (pred === scoringResult) correct++;
       else wrong++;
     });
-    const penalty = (wrong + missing) * FINE_AMOUNT;
+    const penalty = (wrong + missing) * fineAmount;
     totalPenalty += penalty;
     resultRows.push({
       matchId: m.id,
@@ -307,7 +331,7 @@ function buildSummaryData_(state) {
       away: m.away,
       homeScore: res.homeScore,
       awayScore: res.awayScore,
-      result: choiceLabel_(res.result, m),
+      result: choiceLabel_(scoringResult, m),
       correct: correct,
       wrong: wrong,
       missing: missing,
@@ -339,7 +363,7 @@ function clearSheet_(sheet) {
   const maxRows = sheet.getMaxRows();
   const maxCols = sheet.getMaxColumns();
   if (maxRows > 1 || maxCols > 1) {
-    sheet.getRange(1, 1, maxRows, maxCols).clear();
+    sheet.getRange(1, 1, maxRows, maxCols).clearDataValidations().clear();
   }
 }
 
@@ -407,10 +431,73 @@ function resultOfScore_(homeScore, awayScore) {
   return 'D';
 }
 
+function normalizeText_(value) {
+  return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').trim().toLowerCase();
+}
+
+function isFinalMatch_(match, matches) {
+  const last = matches && matches.length ? matches[matches.length - 1] : null;
+  return normalizeText_(match && match.round).indexOf('chung ket') >= 0 || Boolean(last && match && match.id === last.id);
+}
+
+function fineAmountForMatch_(match, matches) {
+  return isFinalMatch_(match, matches) ? FINAL_FINE_AMOUNT : FINE_AMOUNT;
+}
+
+function scoringResultForMatch_(match, result) {
+  return result && (result.advanceResult || result.result) ? (result.advanceResult || result.result) : '';
+}
+
+function resolveBracketSlotForSheet_(slot, state) {
+  const overrides = {
+    W73:'Canada', W74:'Paraguay', W75:'Morocco', W76:'Brazil', W77:'France', W78:'Norway',
+    W79:'Mexico', W80:'England', W81:'United States', W82:'Belgium', W83:'Portugal',
+    W84:'Spain', W85:'Switzerland', W86:'Argentina', W87:'Colombia', W88:'Egypt',
+    W96:'Colombia', W99:'England', W100:'Argentina', L102:'England', W102:'Argentina'
+  };
+  if (overrides[slot]) return overrides[slot];
+  const parsed = String(slot || '').match(/^([WL])(M?\d+)$/i);
+  if (!parsed) return slot;
+  const sourceId = normalizeMatchId_(parsed[2]);
+  const matches = state && state.matches ? state.matches : [];
+  const source = matches.filter(function(match) { return match.id === sourceId; })[0];
+  const result = state && state.results ? state.results[sourceId] : null;
+  const advanceResult = result && (result.advanceResult || (['H', 'A'].indexOf(result.result) >= 0 ? result.result : ''));
+  if (!source || !result || result.status !== 'done' || ['H', 'A'].indexOf(advanceResult) < 0) return parsed[1].toUpperCase() === 'W' ? 'Thắng ' + sourceId : 'Thua ' + sourceId;
+  const home = resolveBracketSlotForSheet_(source.homeSlot || source.home, state);
+  const away = resolveBracketSlotForSheet_(source.awaySlot || source.away, state);
+  const winner = advanceResult === 'H' ? home : away;
+  const loser = advanceResult === 'H' ? away : home;
+  return parsed[1].toUpperCase() === 'W' ? winner : loser;
+}
+
+function normalizeMatchId_(value) {
+  const raw = String(value || '').trim().toUpperCase();
+  const parsed = raw.match(/^M?(\d+)$/);
+  return parsed ? 'M' + parsed[1] : raw;
+}
+
+function resultFromWinnerCell_(value, match) {
+  const text = normalizeText_(value);
+  if (!text) return '';
+  if (['h', 'home', 'doi 1', 'doi1', '1', 'chu nha'].indexOf(text) >= 0 || text.indexOf('doi 1 thang') >= 0 || text.indexOf('doi1 thang') >= 0) return 'H';
+  if (['a', 'away', 'doi 2', 'doi2', '2', 'khach'].indexOf(text) >= 0 || text.indexOf('doi 2 thang') >= 0 || text.indexOf('doi2 thang') >= 0) return 'A';
+  if (text.indexOf(normalizeText_(match.home)) >= 0) return 'H';
+  if (text.indexOf(normalizeText_(match.away)) >= 0) return 'A';
+  return '';
+}
+
 function choiceLabel_(choice, match) {
   if (choice === 'H') return match.home + ' thắng';
   if (choice === 'D') return 'Hòa';
   if (choice === 'A') return match.away + ' thắng';
+  return '';
+}
+
+function resultSheetChoiceLabel_(choice, match) {
+  if (choice === 'H') return match.home + ' thắng trận';
+  if (choice === 'D') return 'Hòa';
+  if (choice === 'A') return match.away + ' thắng trận';
   return '';
 }
 
