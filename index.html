@@ -249,7 +249,7 @@
 <body>
   <div class="hero">
     <div class="hero-inner">
-      <div class="title"><div class="logo">⚽</div><div><h1>Portal dự đoán kết quả World Cup 2026 - P.CN</h1><p><b>Thể lệ:</b> Người chơi dự đoán kết quả <b>Thắng/Hòa/Thua</b>. Sai đóng góp <b>50k/trận</b>; từ <b>15/7</b> trở đi <b>100k/trận</b></p></div></div>
+      <div class="title"><div class="logo">⚽</div><div><h1>Portal dự đoán kết quả World Cup 2026 - P.CN</h1><p><b>Thể lệ:</b> Người chơi dự đoán kết quả <b>Thắng/Hòa/Thua</b>. Sai đóng góp <b>50k/trận</b>; riêng <b>chung kết 100k/trận</b>. Trận knock-out chấm theo đội thắng chung cuộc.</p></div></div>
       <div class="chips"><span class="pill" id="clockPill">Giờ VN: --</span><span class="pill" id="cloudPill">Cloud: chưa cấu hình</span><button class="pill hero-admin-tab tab" type="button" data-tab="admin">🔐 QTV</button></div>
     </div>
   </div>
@@ -335,7 +335,7 @@
         </div>
         <div class="field admin-only"><label>Log thao tác</label><textarea id="logBox" readonly></textarea></div>
       </div>
-      <div class="card pad admin-only admin-panel" id="resultPanel" style="margin-top:12px"><h2>Kết quả trận đấu</h2><p class="small">Hệ thống chỉ lấy kết quả từ sheet <span class="code">KQ_TranDau</span>. QTV cập nhật hoặc xóa tỷ số trong Google Sheet rồi bấm đồng bộ.</p><div class="toolbar qtv-compact"><button class="btn primary" id="btnLoadOnlineResults">Lấy KQ từ Google Sheet</button><div class="field result-clear-field"><label>Xóa KQ ngày</label><select id="adminResultClearDate"></select></div><button class="btn danger" id="btnClearResultDate">Xóa KQ ngày</button></div><div id="resultEditor"></div></div>
+      <div class="card pad admin-only admin-panel" id="resultPanel" style="margin-top:12px"><h2>Kết quả trận đấu</h2><p class="small">Hệ thống chỉ lấy kết quả từ sheet <span class="code">KQ_TranDau</span>. QTV cập nhật hoặc xóa tỷ số trong Google Sheet rồi bấm đồng bộ.</p><div class="toolbar qtv-compact"><button class="btn primary" id="btnLoadOnlineResults">Lấy KQ từ Google Sheet</button><button class="btn warn" id="btnRestoreResultsSheet">Khôi phục KQ từ Cloud state</button><div class="field result-clear-field"><label>Xóa KQ ngày</label><select id="adminResultClearDate"></select></div><button class="btn danger" id="btnClearResultDate">Xóa KQ ngày</button></div><div id="resultEditor"></div></div>
       <div class="card pad admin-only danger-zone admin-panel" id="deletePanel" style="margin-top:12px;display:none">
         <h2>QTV xóa dự đoán người chơi</h2>
         <p class="small">Dùng khi người chơi xin dự đoán lại hoặc QTV cần test. Xóa xong bấm Lưu Cloud/Đẩy sheet nếu muốn đồng bộ.</p>
@@ -383,8 +383,7 @@ const OBSOLETE_GOOGLE_SHEET_IDS = new Set([
 ]);
 const ADMIN_PASSWORD_SHA256 = 'e6121f114d1b02a340a2f495504c92feb62a13590a161c25f282d1845aa600ad';
 const FINE_AMOUNT = 50000;
-const FINE_AMOUNT_FROM_15_7 = 100000;
-const FINE_INCREASE_FROM_DAY = '2026-07-15';
+const FINAL_FINE_AMOUNT = 100000;
 const MAX_SUBMISSIONS = 5;
 const PREDICTION_CUTOFF_MINUTES = 5;
 const TZ_LABEL = 'Asia/Bangkok / Việt Nam';
@@ -454,7 +453,8 @@ MATCHES.forEach(match=>{
 const BRACKET_SLOT_OVERRIDES = {
   W73:'Canada', W74:'Paraguay', W75:'Morocco', W76:'Brazil', W77:'France', W78:'Norway',
   W79:'Mexico', W80:'England', W81:'United States', W82:'Belgium', W83:'Portugal',
-  W84:'Spain', W85:'Switzerland', W86:'Argentina', W87:'Colombia', W88:'Egypt'
+  W84:'Spain', W85:'Switzerland', W86:'Argentina', W87:'Colombia', W88:'Egypt',
+  W96:'Colombia', W99:'England', W100:'Argentina', L102:'England', W102:'Argentina'
 };
 
 function resolveBracketSlot(slot){
@@ -512,8 +512,9 @@ function normalizeMatchId(value){ const raw=String(value || '').trim().toUpperCa
 function money(n){ return (n||0).toLocaleString('vi-VN') + 'đ'; }
 function dateKey(iso){ return new Date(iso).toLocaleDateString('sv-SE', {timeZone:'Asia/Bangkok'}); }
 function matchDayKey(m){ return m.day || dateKey(m.kickoff); }
-function fineAmountForMatch(m){ return matchDayKey(m) >= FINE_INCREASE_FROM_DAY ? FINE_AMOUNT_FROM_15_7 : FINE_AMOUNT; }
-function fineRuleLabel(){ return `${money(FINE_AMOUNT)} trước 15/7 · ${money(FINE_AMOUNT_FROM_15_7)} từ 15/7`; }
+function isFinalMatch(m){ return String(m?.round || '').toLowerCase().includes('chung kết') || m?.id === MATCHES[MATCHES.length - 1]?.id; }
+function fineAmountForMatch(m){ return isFinalMatch(m) ? FINAL_FINE_AMOUNT : FINE_AMOUNT; }
+function fineRuleLabel(){ return `${money(FINE_AMOUNT)} · chung kết ${money(FINAL_FINE_AMOUNT)}`; }
 function displayDay(d){ return d && d !== 'all' ? d.split('-').reverse().slice(0,2).join('/') : 'đang chọn'; }
 function vnDate(iso){ return new Date(iso).toLocaleString('vi-VN', {timeZone:'Asia/Bangkok', hour:'2-digit', minute:'2-digit', day:'2-digit', month:'2-digit', year:'numeric'}); }
 function nowVN(){ return new Date().toLocaleString('vi-VN', {timeZone:'Asia/Bangkok', hour12:false, weekday:'short', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit'}); }
@@ -522,6 +523,8 @@ function vnDateTime(iso){ return iso ? new Date(iso).toLocaleString('vi-VN', {ti
 function escapeHtml(s){ return String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function choiceLabel(v, m){ if(v==='H') return m.home + ' thắng'; if(v==='D') return 'Hòa'; if(v==='A') return m.away + ' thắng'; return 'Chưa chọn'; }
 function resultOfScore(homeScore, awayScore){ if(homeScore === '' || awayScore === '' || homeScore == null || awayScore == null) return ''; const h=Number(homeScore), a=Number(awayScore); if(!Number.isFinite(h)||!Number.isFinite(a)) return ''; if(h>a) return 'H'; if(h<a) return 'A'; return 'D'; }
+function scoringResultForMatch(m, res=state.results[m?.id]){ return res?.advanceResult || res?.result || ''; }
+function scoringResultLabel(m, res=state.results[m?.id]){ return choiceLabel(scoringResultForMatch(m, res), m); }
 function isLocked(match){ return Date.now() >= new Date(match.kickoff).getTime(); }
 function resultStatus(m){ return state.results[m.id]?.status === 'done'; }
 function predictionSubmittedAt(record){ return record?.submittedAt || record?.updatedAt || record?.history?.at?.(-1)?.updatedAt || ''; }
@@ -679,6 +682,7 @@ function fineRows(){
   for(const m of MATCHES){
     const res = state.results[m.id];
     if(!res || res.status!=='done') continue;
+    const scoringResult = scoringResultForMatch(m, res);
     const dk = matchDayKey(m);
     const fineAmount = fineAmountForMatch(m);
     for(const p of PLAYERS){
@@ -689,7 +693,7 @@ function fineRows(){
       if(!pred){
         r.missing++; r.byDay[dk].missing++;
         if(state.settings.missingPenalty){ r.total += fineAmount; r.byDay[dk].total += fineAmount; }
-      }else if(pred === res.result){
+      }else if(pred === scoringResult){
         r.correct++; r.byDay[dk].correct++;
       }else{
         r.wrong++; r.total += fineAmount; r.byDay[dk].wrong++; r.byDay[dk].total += fineAmount;
@@ -735,7 +739,7 @@ function renderMatches(){
       const disabled = !player || locked || done || dayRemain <= 0;
       const res = state.results[m.id];
       const advanceText = res?.advanceResult && res.advanceResult !== res.result ? ` · Đi tiếp: ${choiceLabel(res.advanceResult,m).replace(' thắng','')}` : '';
-      let badge = !player ? '<span class="badge lock">Chọn người chơi</span>' : done ? `<span class="badge done">KQ 90p: ${res.homeScore}-${res.awayScore} · ${choiceLabel(res.result,m)}${escapeHtml(advanceText)}</span>` : locked ? '<span class="badge lock">Đã khóa chọn</span>' : dayRemain<=0 ? '<span class="badge bad">Đã dùng đủ 5 lần gửi</span>' : '<span class="badge open">Đang mở chọn</span>';
+      let badge = !player ? '<span class="badge lock">Chọn người chơi</span>' : done ? `<span class="badge done">KQ chấm: ${escapeHtml(scoringResultLabel(m,res))} · 90p ${res.homeScore}-${res.awayScore}${escapeHtml(advanceText)}</span>` : locked ? '<span class="badge lock">Đã khóa chọn</span>' : dayRemain<=0 ? '<span class="badge bad">Đã dùng đủ 5 lần gửi</span>' : '<span class="badge open">Đang mở chọn</span>';
       const count=predCount(m.id); const pct=Math.round(count*100/PLAYERS.length);
       return `<div class="match-card daytone-${di%6}">
         <div class="match-head"><div><div class="match-meta">${m.id} · ${m.round} · ${vnDate(m.kickoff)}</div><div class="teams">${escapeHtml(m.home)} <span class="small">vs</span> ${escapeHtml(m.away)}</div><div class="venue">${escapeHtml(m.venue)} · ${TZ_LABEL}</div></div>${badge}</div>
@@ -759,15 +763,16 @@ function buildResultsSheetRows(){
   return MATCHES.filter(m=>resultStatus(m)).map(m=>{
     const res = state.results[m.id];
     const fineAmount = fineAmountForMatch(m);
+    const scoringResult = scoringResultForMatch(m, res);
     let correct=0, wrong=0, missing=0;
     PLAYERS.forEach(p=>{
       const rec = state.predictions[m.id]?.[p.name];
       const pred = isPredictionValidForScoring(m, rec) ? rec.choice : '';
       if(!pred) missing++;
-      else if(pred===res.result) correct++;
+      else if(pred===scoringResult) correct++;
       else wrong++;
     });
-    return {matchId:m.id, date:matchDayKey(m), home:m.home, away:m.away, homeScore:res.homeScore, awayScore:res.awayScore, result:choiceLabel(res.result,m), correct, wrong, missing, totalPenalty:(wrong + (state.settings.missingPenalty ? missing : 0)) * fineAmount};
+    return {matchId:m.id, date:matchDayKey(m), home:m.home, away:m.away, homeScore:res.homeScore, awayScore:res.awayScore, result:scoringResultLabel(m,res), correct, wrong, missing, totalPenalty:(wrong + (state.settings.missingPenalty ? missing : 0)) * fineAmount};
   });
 }
 function buildThongKeDuDoanRows(mode='current5'){
@@ -844,7 +849,8 @@ function renderStats(){
         const rec = state.predictions[m.id]?.[p.name];
         const pred = isPredictionValidForScoring(m, rec) ? rec.choice : '';
         const res = state.results[m.id];
-        if(pred && res?.status==='done' && pred !== res.result) total += fineAmount;
+        const scoringResult = scoringResultForMatch(m, res);
+        if(pred && res?.status==='done' && pred !== scoringResult) total += fineAmount;
         else if(!pred && res?.status==='done' && state.settings.missingPenalty) total += fineAmount;
       });
       return total;
@@ -859,9 +865,10 @@ function renderStats(){
         let penalty = 0;
         if(pred){
           const fineAmount = fineAmountForMatch(m);
+          const scoringResult = scoringResultForMatch(m, res);
           const pickText = '<b>' + escapeHtml(choiceLabel(pred,m)) + '</b>';
           if(!res || res.status !== 'done') content = pickText + '<br><span class="status-pill warn">Đã dự đoán</span>';
-          else if(pred === res.result) content = pickText + '<br><span class="status-pill ok">Đúng</span>';
+          else if(pred === scoringResult) content = pickText + '<br><span class="status-pill ok">Đúng</span>';
           else { content = pickText + '<br><span class="status-pill bad">Sai · ' + money(fineAmount) + '</span>'; penalty = fineAmount; }
         }else if(res?.status === 'done' && state.settings.missingPenalty){
           penalty = fineAmountForMatch(m);
@@ -914,9 +921,10 @@ function detailForPlayer(player){
     const pred=isPredictionValidForScoring(m, rec) ? rec.choice : '';
     const res=state.results[m.id];
     const fineAmount = fineAmountForMatch(m);
+    const scoringResult = scoringResultForMatch(m, res);
     let status, fine=0;
     if(!pred){ status=rec?.choice ? 'Muộn' : 'Thiếu'; fine=state.settings.missingPenalty ? fineAmount : 0; }
-    else if(pred===res.result){ status='Đúng'; }
+    else if(pred===scoringResult){ status='Đúng'; }
     else { status='Sai'; fine=fineAmount; }
     return {m,pred,res,status,fine};
   });
@@ -938,7 +946,7 @@ function renderFines(){
   if(selectedResultPlayer && !PLAYERS.some(p=>p.name===selectedResultPlayer)) selectedResultPlayer = '';
   const total=allRows.reduce((s,r)=>s+r.total,0);
   const body=rows.map((r,i)=>{
-    const detailRows = selectedResultPlayer===r.name ? detailForPlayer(r.name).map(x=>`<tr><td>${x.m.id}<br><span class="small">${vnDate(x.m.kickoff)}</span></td><td>${escapeHtml(x.m.home)} vs ${escapeHtml(x.m.away)}</td><td>${escapeHtml(choiceLabel(x.pred,x.m))}</td><td>${x.res.homeScore}-${x.res.awayScore}<br><span class="small">${escapeHtml(choiceLabel(x.res.result,x.m))}</span></td><td><span class="status-pill ${x.status==='Đúng'?'ok':x.status==='Sai'?'bad':'warn'}">${x.status}</span></td><td class="right">${money(x.fine)}</td></tr>`).join('') : '';
+    const detailRows = selectedResultPlayer===r.name ? detailForPlayer(r.name).map(x=>`<tr><td>${x.m.id}<br><span class="small">${vnDate(x.m.kickoff)}</span></td><td>${escapeHtml(x.m.home)} vs ${escapeHtml(x.m.away)}</td><td>${escapeHtml(choiceLabel(x.pred,x.m))}</td><td>${x.res.homeScore}-${x.res.awayScore}<br><span class="small">${escapeHtml(scoringResultLabel(x.m,x.res))}</span></td><td><span class="status-pill ${x.status==='Đúng'?'ok':x.status==='Sai'?'bad':'warn'}">${x.status}</span></td><td class="right">${money(x.fine)}</td></tr>`).join('') : '';
     const detail = selectedResultPlayer===r.name ? `<tr class="fine-player-detail"><td colspan="7"><div class="fine-detail-box"><b>Chi tiết: ${escapeHtml(r.name)}</b><div style="overflow:auto;margin-top:8px"><table><thead><tr><th>Mã trận</th><th>Trận</th><th>Dự đoán</th><th>Kết quả</th><th>Trạng thái</th><th class="right">Đóng góp</th></tr></thead><tbody>${detailRows || '<tr><td colspan="6">Chưa có trận nào nhập kết quả.</td></tr>'}</tbody></table></div></div></td></tr>` : '';
     return `<tr><td>${i+1}</td><td><button class="name-link" data-player-detail="${escapeHtml(r.name)}">${escapeHtml(r.name)}</button><br><span class="small">${selectedResultPlayer===r.name?'bấm lại để ẩn':'bấm tên để xem chi tiết'}</span></td><td class="center fine-ok">${r.correct}</td><td class="center fine-bad">${r.wrong}</td><td class="center fine-warn">${r.missing}</td><td class="center"><b>${resultRate(r)}</b></td><td class="right"><b>${money(r.total)}</b></td></tr>${detail}`;
   }).join('');
@@ -974,7 +982,7 @@ function renderResults(){
       const r=state.results[m.id] || {};
       const done = r.status==='done';
       const score = done ? `${r.homeScore}-${r.awayScore}` : '--';
-      const note = done ? `Kết quả: ${choiceLabel(r.result,m)}` : 'Chưa có kết quả';
+      const note = done ? `Kết quả chấm: ${scoringResultLabel(m,r)}` : 'Chưa có kết quả';
       return `<div class="result-row readonly"><div><b>${m.id} · ${escapeHtml(m.home)} vs ${escapeHtml(m.away)}</b><br><span class="small">${vnDate(m.kickoff)} · ${escapeHtml(m.venue)}</span></div><div><b>${score}</b></div><div><span class="result-status-note ${done?'done':'pending'}">${escapeHtml(note)}</span></div></div>`;
     }).join('');
     return `<div class="result-day-group"><h3 class="result-day-title">Ngày ${displayDay(d)}</h3>${rows}</div>`;
@@ -1107,6 +1115,30 @@ async function loadOnlineResults(){
   }catch(e){
     toast('Lỗi đọc trực tiếp sheet KQ_TranDau: ' + (e.message || e), 7000);
   }
+}
+
+async function restoreResultsSheetFromCloud(){
+  if(!isAdmin){ toast('Cần mở QTV để khôi phục KQ.'); return; }
+  const url = cloudUrl();
+  if(!url){ toast('Chưa có Apps Script URL để khôi phục KQ.'); return; }
+  const target=await verifyWritableCloudTarget(url);
+  if(!target.ok){ toast(target.error, 9000); return; }
+  if(!confirm('Khôi phục sheet KQ_TranDau từ Cloud state hiện có?')) return;
+  const cb='wcRestoreResultsCb_' + Date.now();
+  const script=document.createElement('script');
+  window[cb] = (data) => {
+    try{
+      if(!data || data.ok===false) throw new Error(data?.error || 'Apps Script không trả dữ liệu khôi phục hợp lệ');
+      mergeState(data.state || {});
+      saveLocal();
+      render();
+      toast(`Đã khôi phục KQ_TranDau từ Cloud state: ${Number(data.restored || 0)} trận có kết quả.`, 7000);
+    }catch(e){ toast('Lỗi khôi phục KQ: ' + (e.message || e), 7000); }
+    finally{ delete window[cb]; script.remove(); }
+  };
+  script.onerror=()=>{ delete window[cb]; script.remove(); toast('Không gọi được Apps Script action=restoreresults.', 7000); };
+  script.src = url + (url.includes('?')?'&':'?') + 'action=restoreresults&callback=' + encodeURIComponent(cb) + '&t=' + Date.now();
+  document.body.appendChild(script);
 }
 
 async function clearResultsByDate(){
@@ -1590,6 +1622,7 @@ function bind(){
   if($('btnExportResultSheetCsv')) $('btnExportResultSheetCsv').onclick=exportResultSheetCsv;
   if($('btnExportThongKeSheetCsv')) $('btnExportThongKeSheetCsv').onclick=exportThongKeSheetCsv;
   if($('btnLoadOnlineResults')) $('btnLoadOnlineResults').onclick=loadOnlineResults;
+  if($('btnRestoreResultsSheet')) $('btnRestoreResultsSheet').onclick=restoreResultsSheetFromCloud;
   if($('btnClearResultDate')) $('btnClearResultDate').onclick=clearResultsByDate;
   if($('btnCopyFine')) $('btnCopyFine').onclick=copyFine;
   if($('btnResetLocal')) $('btnResetLocal').onclick=()=>{ if(confirm('Xóa dữ liệu local trên máy này? Không xóa Google Sheet Cloud.')){ localStorage.removeItem(STORAGE_KEY); state=defaultState(); render(); toast('Đã xóa dữ liệu máy này.'); } };
